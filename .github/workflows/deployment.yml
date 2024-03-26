@@ -83,10 +83,10 @@ jobs:
         id: deploy-dev
         if: contains(github.ref, 'develop')
         with:
+          key: ${{ secrets.PRIVATE_KEY }}
           host: ${{ secrets.HOST_DEV }}
           username: ${{ secrets.USERNAME }}
-          port: 22
-          key: ${{ secrets.PRIVATE_KEY }}
+          port: ${{ secrets.PORT }}
           script: |
             ssh dev sudo docker rm -f $(ssh dev sudo docker ps -qa)
             ssh dev sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO }}
