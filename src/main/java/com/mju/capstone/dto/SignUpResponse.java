@@ -1,7 +1,9 @@
 package com.mju.capstone.dto;
 
 import lombok.Builder;
+import lombok.Getter;
 
+@Getter
 public class SignUpResponse {
 
   boolean isSuccess;
