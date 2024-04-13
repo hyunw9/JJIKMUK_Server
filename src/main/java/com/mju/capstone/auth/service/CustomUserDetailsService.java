@@ -4,7 +4,6 @@ import com.mju.capstone.auth.entity.Member;
 import com.mju.capstone.auth.repository.MemberRepository;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.task.TaskExecutionProperties.Simple;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
