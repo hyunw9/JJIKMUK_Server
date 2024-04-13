@@ -36,3 +36,11 @@ out/
 ### VS Code ###
 .vscode/
 /src/main/resources/application.yml
+.ipynb_checkpoints/data_insert_script-checkpoint.ipynb
+.ipynb_checkpoints/Untitled-checkpoint.ipynb
+data.csv
+data_insert_script.ipynb
+dbscript.py
+foodData.csv
+Untitled-1.py
+/src/main/resources/secret.yml
