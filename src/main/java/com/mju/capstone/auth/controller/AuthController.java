@@ -7,6 +7,7 @@ import com.mju.capstone.auth.service.AuthService;
 import com.mju.capstone.auth.token.dto.TokenDto;
 import com.mju.capstone.auth.token.dto.TokenRequest;
 import com.mju.capstone.global.response.ControllerMessage;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
