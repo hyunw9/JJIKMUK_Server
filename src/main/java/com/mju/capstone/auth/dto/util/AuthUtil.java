@@ -1,7 +1,7 @@
 package com.mju.capstone.auth.dto.util;
 
 import com.mju.capstone.auth.dto.response.MemberRes;
-import com.mju.capstone.auth.entity.Member;
+import com.mju.capstone.auth.repository.entity.Member;
 
 public class AuthUtil {
 

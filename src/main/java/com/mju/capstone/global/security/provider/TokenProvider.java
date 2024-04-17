@@ -1,6 +1,6 @@
 package com.mju.capstone.global.security.provider;
 
-import com.mju.capstone.auth.token.dto.TokenDto;
+import com.mju.capstone.global.security.token.dto.TokenRes;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -41,7 +41,7 @@ public class TokenProvider {
     this.key = Keys.hmacShaKeyFor(keyBytes);
   }
 
-  public TokenDto generateToken(Authentication authentication){
+  public TokenRes generateToken(Authentication authentication){
     String authorities = authentication.getAuthorities().stream()
         .map(GrantedAuthority::getAuthority)
         .collect(Collectors.joining(","));
@@ -61,7 +61,7 @@ public class TokenProvider {
         .signWith(key, SignatureAlgorithm.HS512)
         .compact();
 
-    return TokenDto.builder()
+    return TokenRes.builder()
         .grantType(BEARER_TYPE)
         .accessToken(accessToken)
         .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
