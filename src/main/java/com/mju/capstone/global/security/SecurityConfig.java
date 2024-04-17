@@ -2,6 +2,8 @@ package com.mju.capstone.global.security;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+import com.mju.capstone.global.security.handler.JwtAccessDeniedHandler;
+import com.mju.capstone.global.security.handler.JwtAuthenticationEntryPoint;
 import com.mju.capstone.global.security.filter.JwtFilter;
 import com.mju.capstone.global.security.provider.TokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,7 +50,11 @@ public class SecurityConfig {
 //            .requestMatchers("/**").permitAll()
             .requestMatchers("/api/v1/auth/**").permitAll()
             .anyRequest().authenticated()
+
         )
+        .exceptionHandling((e)->e.authenticationEntryPoint(new JwtAuthenticationEntryPoint()))
+        .exceptionHandling((e)->e.accessDeniedHandler(new JwtAccessDeniedHandler()))
+
         .httpBasic(withDefaults());
 
     return httpSecurity.build();
