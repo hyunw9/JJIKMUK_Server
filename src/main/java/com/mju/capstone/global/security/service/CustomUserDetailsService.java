@@ -1,6 +1,6 @@
-package com.mju.capstone.auth.service;
+package com.mju.capstone.global.security.service;
 
-import com.mju.capstone.auth.entity.Member;
+import com.mju.capstone.auth.repository.entity.Member;
 import com.mju.capstone.auth.repository.MemberRepository;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;

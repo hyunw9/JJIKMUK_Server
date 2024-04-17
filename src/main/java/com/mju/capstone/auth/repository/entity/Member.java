@@ -1,6 +1,5 @@
-package com.mju.capstone.auth.entity;
+package com.mju.capstone.auth.repository.entity;
 
-import com.mju.capstone.user.entity.Gender;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -42,9 +41,11 @@ public class Member {
 
   private int dietPlan;
 
+  private int kcal;
+
   @Builder
   public Member(String email, String password, Role role, String nickname, int height, int weight,
-      Gender gender, int birth, int level, int dietPlan) {
+      Gender gender, int birth, int level, int dietPlan, int kcal) {
     this.email = email;
     this.password = password;
     this.role = role;
@@ -55,5 +56,10 @@ public class Member {
     this.birth = birth;
     this.level = level;
     this.dietPlan = dietPlan;
+    this.kcal = 0;
+  }
+
+  public void initializeCalorie(int kcal){
+    this.kcal = kcal;
   }
 }
