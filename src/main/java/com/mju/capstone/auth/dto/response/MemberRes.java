@@ -1,6 +1,6 @@
 package com.mju.capstone.auth.dto.response;
 
-import com.mju.capstone.auth.entity.Role;
+import com.mju.capstone.auth.repository.entity.Role;
 import lombok.Builder;
 
 public record MemberRes(
