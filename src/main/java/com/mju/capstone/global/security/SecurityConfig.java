@@ -2,8 +2,8 @@ package com.mju.capstone.global.security;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
-import com.mju.capstone.auth.exception.JwtAccessDeniedHandler;
-import com.mju.capstone.auth.exception.JwtAuthenticationEntryPoint;
+import com.mju.capstone.global.security.handler.JwtAccessDeniedHandler;
+import com.mju.capstone.global.security.handler.JwtAuthenticationEntryPoint;
 import com.mju.capstone.global.security.filter.JwtFilter;
 import com.mju.capstone.global.security.provider.TokenProvider;
 import jakarta.servlet.http.HttpServletRequest;

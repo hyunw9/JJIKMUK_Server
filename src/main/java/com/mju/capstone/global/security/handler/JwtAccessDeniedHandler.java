@@ -1,4 +1,4 @@
-package com.mju.capstone.auth.exception;
+package com.mju.capstone.global.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mju.capstone.global.response.ControllerMessage;
