@@ -1,6 +1,6 @@
 package com.mju.capstone.global.security.provider;
 
-import com.mju.capstone.auth.token.dto.TokenDto;
+import com.mju.capstone.global.security.token.dto.TokenRes;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -41,7 +41,7 @@ public class TokenProvider {
     this.key = Keys.hmacShaKeyFor(keyBytes);
   }
 
-  public TokenDto generateToken(Authentication authentication){
+  public TokenRes generateToken(Authentication authentication){
     String authorities = authentication.getAuthorities().stream()
         .map(GrantedAuthority::getAuthority)
         .collect(Collectors.joining(","));
@@ -61,7 +61,7 @@ public class TokenProvider {
         .signWith(key, SignatureAlgorithm.HS512)
         .compact();
 
-    return TokenDto.builder()
+    return TokenRes.builder()
         .grantType(BEARER_TYPE)
         .accessToken(accessToken)
         .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
@@ -87,17 +87,18 @@ public class TokenProvider {
   }
 
   public boolean validateToken(String token){
-    try{
+    try {
       Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
       return true;
-    }catch (SecurityException | MalformedJwtException e){
-      log.info("잘못된 JWT 서명입니다.");
+    }
+    catch (SecurityException | MalformedJwtException e ){
+      log.error("잘못된 JWT 서명입니다.");
     }catch (ExpiredJwtException e) {
-      log.info("만료된 JWT 토큰입니다.");
+      log.error("만료된 JWT 토큰입니다.");
     }catch (UnsupportedJwtException e){
-      log.info("지원되지 않는 JWT 토큰입니다.");
+      log.error("지원되지 않는 JWT 토큰입니다.");
     }catch (IllegalArgumentException e){
-      log.info("JWT 토큰이 잘못되었습니다.");
+      log.error("JWT 토큰이 잘못되었습니다.");
     }
     return false;
   }

@@ -2,10 +2,8 @@ package com.mju.capstone.auth.controller;
 
 import com.mju.capstone.auth.dto.request.LoginReq;
 import com.mju.capstone.auth.dto.request.MemberReq;
-import com.mju.capstone.auth.dto.response.MemberRes;
 import com.mju.capstone.auth.service.AuthService;
-import com.mju.capstone.auth.token.dto.TokenDto;
-import com.mju.capstone.auth.token.dto.TokenRequest;
+import com.mju.capstone.global.security.token.dto.TokenReq;
 import com.mju.capstone.global.response.ControllerMessage;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +32,8 @@ public class AuthController {
   }
 
   @PostMapping("/reissue")
-  public ResponseEntity<?> reissue(@RequestBody TokenRequest tokenRequest){
-    return new ResponseEntity<>(new ControllerMessage(HttpStatus.OK,"성공",authService.reissue(tokenRequest)),HttpStatus.OK);
+  public ResponseEntity<?> reissue(@RequestBody TokenReq tokenReq){
+    return new ResponseEntity<>(new ControllerMessage(HttpStatus.OK,"성공",authService.reissue(
+        tokenReq)),HttpStatus.OK);
   }
 }

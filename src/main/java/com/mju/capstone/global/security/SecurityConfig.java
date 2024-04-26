@@ -2,6 +2,8 @@ package com.mju.capstone.global.security;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+import com.mju.capstone.global.security.handler.JwtAccessDeniedHandler;
+import com.mju.capstone.global.security.handler.JwtAuthenticationEntryPoint;
 import com.mju.capstone.global.security.filter.JwtFilter;
 import com.mju.capstone.global.security.provider.TokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,14 +50,17 @@ public class SecurityConfig {
         }))
         .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
         .authorizeHttpRequests((request) -> request
-//            .requestMatchers("/**").permitAll()
                 .requestMatchers("/api/v1/**", "/api/v1/auth/**").permitAll()
                 // SpringDoc 경로 허용
                 .requestMatchers("/api-docs/**").permitAll()
                 // 추가적인 Swagger UI 관련 경로 허용 (static resources)
                 .requestMatchers("/webjars/**", "/swagger-resources/**").permitAll()
                 .anyRequest().authenticated()
+
         )
+        .exceptionHandling((e)->e.authenticationEntryPoint(new JwtAuthenticationEntryPoint()))
+        .exceptionHandling((e)->e.accessDeniedHandler(new JwtAccessDeniedHandler()))
+
         .httpBasic(withDefaults());
 
     return httpSecurity.build();

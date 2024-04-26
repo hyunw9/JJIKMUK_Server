@@ -1,6 +1,6 @@
-package com.mju.capstone.auth.token.repository;
+package com.mju.capstone.global.security.token.repository;
 
-import com.mju.capstone.auth.token.entity.RefreshToken;
+import com.mju.capstone.global.security.token.entity.RefreshToken;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

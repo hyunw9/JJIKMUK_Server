@@ -1,4 +1,4 @@
-package com.mju.capstone.auth.token.entity;
+package com.mju.capstone.global.security.token.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
