@@ -7,8 +7,10 @@ import com.mju.capstone.global.security.handler.JwtAuthenticationEntryPoint;
 import com.mju.capstone.global.security.filter.JwtFilter;
 import com.mju.capstone.global.security.provider.TokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.Arrays;
 import java.util.Collections;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,8 +34,9 @@ public class SecurityConfig {
   public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
 
     httpSecurity.csrf(AbstractHttpConfigurer::disable)
-        .sessionManagement((session)->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .cors(corsCutomizer->corsCutomizer.configurationSource(new CorsConfigurationSource() {
+        .sessionManagement(
+            (session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .cors(corsCutomizer -> corsCutomizer.configurationSource(new CorsConfigurationSource() {
           @Override
           public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
             CorsConfiguration config = new CorsConfiguration();
@@ -46,10 +49,13 @@ public class SecurityConfig {
           }
         }))
         .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
-        .authorizeHttpRequests((request)->request
-//            .requestMatchers("/**").permitAll()
-            .requestMatchers("/api/v1/auth/**").permitAll()
-            .anyRequest().authenticated()
+        .authorizeHttpRequests((request) -> request
+                .requestMatchers("/api/v1/**", "/api/v1/auth/**").permitAll()
+                // SpringDoc 경로 허용
+                .requestMatchers("/api-docs/**").permitAll()
+                // 추가적인 Swagger UI 관련 경로 허용 (static resources)
+                .requestMatchers("/webjars/**", "/swagger-resources/**").permitAll()
+                .anyRequest().authenticated()
 
         )
         .exceptionHandling((e)->e.authenticationEntryPoint(new JwtAuthenticationEntryPoint()))
@@ -61,7 +67,7 @@ public class SecurityConfig {
   }
 
   @Bean
-  public PasswordEncoder passwordEncoder(){
+  public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
 }
