@@ -1,8 +1,9 @@
-package com.mju.capstone.auth.service.calculator;
+package com.mju.capstone.member.service.calculator;
 
+import com.mju.capstone.member.dto.response.NutritionResponse;
 import lombok.Builder;
 
-public class MaleCalorieCalculator implements CalorieCalculator{
+public class MaleCalculator implements CalorieCalculator{
 
   private static final double DEFAULT_COEFFICIENT = 88.362;
   private static final double WEIGHT_COEFFICIENT = 13.397;
@@ -16,7 +17,7 @@ public class MaleCalorieCalculator implements CalorieCalculator{
   private int dietPlan;
 
   @Builder
-  public MaleCalorieCalculator(int weight, int age, int height, int level, int dietPlan) {
+  public MaleCalculator(int weight, int age, int height, int level, int dietPlan) {
     this.weight = weight;
     this.age = age;
     this.height = height;
@@ -51,5 +52,14 @@ public class MaleCalorieCalculator implements CalorieCalculator{
       totalTDEE = TDEE + 1000;
     }
     return (int)totalTDEE;
+  }
+
+  public NutritionResponse calculateNutrition(int kcal){
+
+    int carbohydrate = (int)((kcal * 0.5)/4);
+    int protein = (int)((kcal * 0.3)/4);
+    int fat = (int)((kcal * 0.2)/9);
+
+    return NutritionResponse.from(kcal,carbohydrate,protein,fat);
   }
 }

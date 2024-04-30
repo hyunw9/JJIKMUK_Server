@@ -1,6 +1,6 @@
-package com.mju.capstone.auth.repository;
+package com.mju.capstone.member.repository;
 
-import com.mju.capstone.auth.repository.entity.Member;
+import com.mju.capstone.member.entity.Member;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 

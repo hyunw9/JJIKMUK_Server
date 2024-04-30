@@ -1,14 +1,14 @@
-package com.mju.capstone.auth.service.calculator;
+package com.mju.capstone.member.service.calculator;
 
 import com.mju.capstone.auth.dto.request.MemberReq;
-import com.mju.capstone.auth.repository.entity.Gender;
+import com.mju.capstone.member.entity.Gender;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class InitialCalorieCalculatorFactory {
   public static CalorieCalculator getCalorieCalculator(MemberReq memberReq){
     if(memberReq.gender().equals(Gender.MALE)){
-      return MaleCalorieCalculator.builder()
+      return MaleCalculator.builder()
           .age(memberReq.birth())
           .height(memberReq.height())
           .weight(memberReq.weight())
@@ -16,7 +16,7 @@ public class InitialCalorieCalculatorFactory {
           .dietPlan(memberReq.dietPlan())
           .build();
     }else if(memberReq.gender().equals(Gender.FEMALE)){
-      return FemaleCalorieCalculator.builder()
+      return FemaleCalculator.builder()
           .age(memberReq.birth())
           .height(memberReq.height())
           .weight(memberReq.weight())

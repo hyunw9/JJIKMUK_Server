@@ -1,4 +1,4 @@
-package com.mju.capstone.auth.repository.entity;
+package com.mju.capstone.member.entity;
 
 public enum Gender {
 

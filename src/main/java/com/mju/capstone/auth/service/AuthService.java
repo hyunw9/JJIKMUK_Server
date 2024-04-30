@@ -7,15 +7,14 @@ import com.mju.capstone.auth.dto.response.MemberRes;
 import com.mju.capstone.auth.dto.util.AuthUtil;
 import com.mju.capstone.auth.event.RegistrationCompleteEvent;
 import com.mju.capstone.auth.exception.AlreadyRegisteredException;
-import com.mju.capstone.auth.repository.MemberRepository;
-import com.mju.capstone.auth.repository.entity.Member;
 import com.mju.capstone.auth.repository.entity.Role;
 import com.mju.capstone.global.security.provider.TokenProvider;
 import com.mju.capstone.global.security.token.dto.TokenReq;
 import com.mju.capstone.global.security.token.dto.TokenRes;
 import com.mju.capstone.global.security.token.entity.RefreshToken;
 import com.mju.capstone.global.security.token.repository.RefreshTokenRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.mju.capstone.member.entity.Member;
+import com.mju.capstone.member.repository.MemberRepository;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -50,6 +49,11 @@ public class AuthService {
         .email(memberReq.email())
         .password(password)
         .role(Role.valueOf("USER"))
+        .weight(memberReq.weight())
+        .height(memberReq.height())
+        .birth(memberReq.birth())
+        .dietPlan(memberReq.birth())
+        .nickname(memberReq.nickname())
         .build();
 
     memberRepository.save(member);
@@ -77,16 +81,11 @@ public class AuthService {
 
     refreshTokenRepository.save(refreshToken);
 
-    int kcal = memberRepository.findByEmail(loginReq.email())
-        .orElseThrow(()->new EntityNotFoundException("이메일과 일치하는 유저를 찾을 수 없습니다."))
-        .getKcal();
-
     return LoginRes.builder()
         .accessToken(tokenRes.accessToken())
         .refreshToken(tokenRes.refreshToken())
         .accessTokenExpiresIn(tokenRes.accessTokenExpiresIn())
         .grantType(tokenRes.grantType())
-        .kcal(kcal)
         .build();
   }
 

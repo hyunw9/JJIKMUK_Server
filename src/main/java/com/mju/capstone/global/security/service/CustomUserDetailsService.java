@@ -1,7 +1,7 @@
 package com.mju.capstone.global.security.service;
 
-import com.mju.capstone.auth.repository.entity.Member;
-import com.mju.capstone.auth.repository.MemberRepository;
+import com.mju.capstone.member.entity.Member;
+import com.mju.capstone.member.repository.MemberRepository;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,7 +31,7 @@ public class CustomUserDetailsService implements UserDetailsService {
   private UserDetails createUserDetails(Member member){
     GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(member.getRole().toString());
     return new User(
-        String.valueOf(member.getId()),
+        String.valueOf(member.getEmail()),
         member.getPassword(),
         Collections.singletonList(grantedAuthority)
     );
