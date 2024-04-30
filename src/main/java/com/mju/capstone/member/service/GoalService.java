@@ -60,7 +60,7 @@ public class GoalService {
 
     Member member = memberService.findByEmail(email);
     Goal foundGoal = findByMember(member);
-    return GoalNutritionResponse.from(member.getNickname(), foundGoal.getKcal(),
+    return GoalNutritionResponse.from(member.getNickname(), member.getDietPlan() ,foundGoal.getKcal(),
         foundGoal.getCarbohydrate(), foundGoal.getProtein(), foundGoal.getFat());
   }
 
