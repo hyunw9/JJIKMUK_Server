@@ -2,6 +2,7 @@ package com.mju.capstone.global.security.util;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public class SecurityUtil {
 
@@ -18,6 +19,12 @@ public class SecurityUtil {
     }
 
     return Long.parseLong(authentication.getName());
+  }
+
+  public static String getLoginUserEmail(){
+
+    UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    return user.getUsername();
   }
 
 }
