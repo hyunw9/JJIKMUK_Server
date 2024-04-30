@@ -1,6 +1,6 @@
 package com.mju.capstone.auth.dto.request;
 
-import com.mju.capstone.auth.repository.entity.Gender;
+import com.mju.capstone.member.entity.Gender;
 import lombok.Builder;
 
 public record MemberReq(
