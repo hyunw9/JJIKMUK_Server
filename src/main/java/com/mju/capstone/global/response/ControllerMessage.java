@@ -1,34 +1,28 @@
 package com.mju.capstone.global.response;
 
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import org.springframework.http.HttpStatus;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.mju.capstone.global.response.message.ErrorMessage;
+import com.mju.capstone.global.response.message.SuccessMessage;
+import java.util.Optional;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+public record ControllerMessage<T>(
 
-@Getter
-public class ControllerMessage {
+    int status,
+    String message,
+    Optional<T> data
+) {
 
-  private HttpStatus status;
-  private String message;
-  private Object data;
-
-  @Builder
-  public ControllerMessage(HttpStatus status, String message, Object data) {
-    this.status = status;
-    this.message = message;
-    this.data = data;
+  public static <T> ControllerMessage<T> of(SuccessMessage successMessage) {
+    return new ControllerMessage(successMessage.getStatus(), successMessage.getMessage(), Optional.empty());
   }
 
-  public ControllerMessage(HttpStatus status, String message) {
-    this.status = status;
-    this.message = message;
+  public static <T>ControllerMessage<T> of(SuccessMessage successMessage, T data) {
+    return new ControllerMessage(successMessage.getStatus(), successMessage.getMessage(), Optional.of(data));
   }
 
-  @Builder
-  public ControllerMessage(String message, Object data) {
-    this.message = message;
-    this.data = data;
+  public static <T>ControllerMessage<T> of(ErrorMessage errorMessage) {
+    return new ControllerMessage(errorMessage.getStatus(), errorMessage.getMessage(), Optional.empty());
   }
 }
