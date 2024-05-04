@@ -6,8 +6,9 @@ import com.mju.capstone.auth.dto.response.LoginRes;
 import com.mju.capstone.auth.dto.response.MemberRes;
 import com.mju.capstone.auth.dto.util.AuthUtil;
 import com.mju.capstone.auth.event.RegistrationCompleteEvent;
-import com.mju.capstone.auth.exception.AlreadyRegisteredException;
 import com.mju.capstone.auth.repository.entity.Role;
+import com.mju.capstone.global.exception.AuthException;
+import com.mju.capstone.global.response.message.ErrorMessage;
 import com.mju.capstone.global.security.provider.TokenProvider;
 import com.mju.capstone.global.security.token.dto.TokenReq;
 import com.mju.capstone.global.security.token.dto.TokenRes;
@@ -40,7 +41,7 @@ public class AuthService {
   public MemberRes signup(MemberReq memberReq){
 
     if(memberRepository.existsByEmail(memberReq.email())){
-      throw new AlreadyRegisteredException();
+      throw new AuthException(ErrorMessage.ALREADY_REGISTERED_ERROR);
     }
 
     String password = passwordEncoder.encode(memberReq.password());
@@ -94,7 +95,7 @@ public class AuthService {
 
     //1. refresh token 검증
     if( !tokenProvider.validateToken(tokenReq.refreshToken())){
-      throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
+      throw new AuthException(ErrorMessage.REFRESH_TOKEN_NOT_VALID);
     }
 
     //2. Access Token에서 인증 정보 가져오기
@@ -102,11 +103,11 @@ public class AuthService {
 
     //3. 저장소에서 Member ID를 기반으로 Refresh Token 값 가져오기
     RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
-        .orElseThrow(()-> new RuntimeException("로그아웃 된 사용자 입니다."));
+        .orElseThrow(()-> new AuthException(ErrorMessage.USER_ALREADY_LOGOUT));
 
     //4. Refresh Token 일치 검증
     if(!refreshToken.getValue().equals(tokenReq.refreshToken())){
-      throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다.");
+      throw new AuthException(ErrorMessage.UNVALID_TOKEN_EXCEPTIION);
     }
 
     //5. 새로운 토큰 생성

@@ -1,6 +1,8 @@
 package com.mju.capstone.member.service;
 
 import com.mju.capstone.auth.event.RegistrationCompleteEvent;
+import com.mju.capstone.global.exception.NotFoundException;
+import com.mju.capstone.global.response.message.ErrorMessage;
 import com.mju.capstone.global.security.util.SecurityUtil;
 import com.mju.capstone.member.dto.response.GoalNutritionResponse;
 import com.mju.capstone.member.dto.response.NutritionResponse;
@@ -9,7 +11,6 @@ import com.mju.capstone.member.entity.Member;
 import com.mju.capstone.member.repository.GoalRepository;
 import com.mju.capstone.member.service.calculator.CalorieCalculator;
 import com.mju.capstone.member.service.calculator.InitialCalorieCalculatorFactory;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -25,7 +26,7 @@ public class GoalService {
 
   protected Goal findGoalWithMember(Member member) {
     return goalRepository.findByMember(member)
-        .orElseThrow(() -> new EntityNotFoundException("유저가 존재하지 않습니다."));
+        .orElseThrow(() -> new NotFoundException(ErrorMessage.MEMBER_NOT_FOUND));
   }
 
   @EventListener
@@ -66,7 +67,7 @@ public class GoalService {
 
   private Goal findByMember(Member member) {
     return goalRepository.findByMember(member)
-        .orElseThrow(() -> new EntityNotFoundException("존재하는 유저가 없습니다."));
+        .orElseThrow(() -> new NotFoundException(ErrorMessage.MEMBER_NOT_FOUND));
   }
 
 }
