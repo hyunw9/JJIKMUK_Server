@@ -53,6 +53,7 @@ public class AuthService {
         .weight(memberReq.weight())
         .height(memberReq.height())
         .birth(memberReq.birth())
+        .gender(memberReq.gender())
         .dietPlan(memberReq.dietPlan())
         .nickname(memberReq.nickname())
         .build();
