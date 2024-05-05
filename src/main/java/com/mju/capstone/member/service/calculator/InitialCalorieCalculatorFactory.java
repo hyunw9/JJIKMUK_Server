@@ -8,16 +8,18 @@ import lombok.extern.slf4j.Slf4j;
 public class InitialCalorieCalculatorFactory {
   public static CalorieCalculator getCalorieCalculator(MemberReq memberReq){
     if(memberReq.gender().equals(Gender.MALE)){
+      log.info("MALE Calculator 생성");
       return MaleCalculator.builder()
-          .age(memberReq.birth())
+          .birth(memberReq.birth())
           .height(memberReq.height())
           .weight(memberReq.weight())
           .level(memberReq.level())
           .dietPlan(memberReq.dietPlan())
           .build();
     }else if(memberReq.gender().equals(Gender.FEMALE)){
+      log.info("FEMALE Calculator 생성");
       return FemaleCalculator.builder()
-          .age(memberReq.birth())
+          .birth(memberReq.birth())
           .height(memberReq.height())
           .weight(memberReq.weight())
           .level(memberReq.level())
