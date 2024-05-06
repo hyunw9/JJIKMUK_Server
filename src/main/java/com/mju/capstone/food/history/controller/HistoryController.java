@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
-@Tag(name = "History 관련", description = "사용자 음식 섭취 기록 관리")
+@Tag(name = "History", description = "사용자 음식 섭취 기록 관리 (History) 관련")
 public class HistoryController {
 
   private final HistoryService historyService;

@@ -3,6 +3,7 @@ package com.mju.capstone.auth.controller;
 
 import com.mju.capstone.auth.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/query")
+@Tag(name ="Auth", description = "인증 / 인가 관련")
 public class AuthQueryController {
 
   private final AuthService authService;
