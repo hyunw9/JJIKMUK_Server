@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
-@Tag(name = "main", description = "메인화면 관련")
+@Tag(name = "Main", description = "메인화면 관련")
 public class MainController {
 
   private final MainFacadeService mainFacadeService;
