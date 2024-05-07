@@ -8,8 +8,8 @@ import com.mju.capstone.member.entity.Member;
 import com.mju.capstone.member.service.MemberService;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +20,7 @@ public class HistoryService {
   private final HistoryRepository historyRepository;
   private final MemberService memberService;
 
-  public List<HistoryResponse> findRecentHistory() {
+  public HashMap<Long, HistoryResponse> findRecentHistory() {
 
     String email = SecurityUtil.getLoginUserEmail();
     Member member = memberService.findByEmail(email);
@@ -31,12 +31,19 @@ public class HistoryService {
     List<History> historyList = historyRepository.findByMemberIdAndLocalDateTimeBetween(
         member.getId(), sevenDaysAgoDate, nowDate);
 
-    return historyList.stream().map(history -> {
-          Duration duration = Duration.between(history.getLocalDateTime(), nowDate);
-          return HistoryResponse.of(member.getId(), duration.toDays(),
-              history.getTot_kcal(), history.getTot_carbohydrate(), history.getTot_protein(), history.getTot_fat());
-        })
-        .collect(Collectors.toUnmodifiableList());
+    HashMap<Long, HistoryResponse> historyMap = new HashMap<>();
+    for (History history : historyList) {
+      Duration duration = Duration.between(history.getLocalDateTime(), nowDate);
+      HistoryResponse response = HistoryResponse.of(history.getId(), history.getTot_kcal(),
+          history.getTot_carbohydrate(), history.getTot_protein(), history.getTot_fat());
+      historyMap.put(duration.toDays(),response);
+    }
+
+    for (long i = 0; i <=7; i++){
+      historyMap.putIfAbsent(i,HistoryResponse.defaultInstance(null));
+    }
+
+    return historyMap;
   }
 
 }

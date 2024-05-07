@@ -5,7 +5,7 @@ import com.mju.capstone.food.history.service.HistoryService;
 import com.mju.capstone.main.dto.MainResponse;
 import com.mju.capstone.member.dto.response.GoalNutritionResponse;
 import com.mju.capstone.member.service.GoalService;
-import java.util.List;
+import java.util.HashMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ public class MainFacadeService {
   public MainResponse getMainData(){
 
     GoalNutritionResponse nutritionInfo = goalService.getMemberGoal();
-    List<HistoryResponse> historyInfoList = historyService.findRecentHistory();
+    HashMap<Long, HistoryResponse> historyInfoList = historyService.findRecentHistory();
 
     return MainResponse.of(nutritionInfo,historyInfoList);
   }
