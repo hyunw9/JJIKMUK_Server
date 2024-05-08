@@ -55,7 +55,7 @@ public class HistoryService {
     return historyMap;
   }
 
-  @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
+  @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void updateHistory(HistoryEvent historyEvent) {
 
