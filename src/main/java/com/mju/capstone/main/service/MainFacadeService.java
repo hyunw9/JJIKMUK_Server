@@ -1,7 +1,7 @@
 package com.mju.capstone.main.service;
 
-import com.mju.capstone.food.history.dto.HistoryResponse;
-import com.mju.capstone.food.history.service.HistoryService;
+import com.mju.capstone.food.dto.response.HistoryResponse;
+import com.mju.capstone.food.service.HistoryService;
 import com.mju.capstone.main.dto.MainResponse;
 import com.mju.capstone.member.dto.response.GoalNutritionResponse;
 import com.mju.capstone.member.service.GoalService;
@@ -19,7 +19,7 @@ public class MainFacadeService {
   public MainResponse getMainData(){
 
     GoalNutritionResponse nutritionInfo = goalService.getMemberGoal();
-    HashMap<Long, HistoryResponse> historyInfoList = historyService.findRecentHistory();
+    HashMap<Integer, HistoryResponse> historyInfoList = historyService.findRecentHistory();
 
     return MainResponse.of(nutritionInfo,historyInfoList);
   }

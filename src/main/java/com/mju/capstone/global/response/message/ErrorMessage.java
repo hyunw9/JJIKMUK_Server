@@ -16,6 +16,7 @@ public enum ErrorMessage {
   UNVALID_TOKEN_EXCEPTIION(HttpStatus.FORBIDDEN.value(), "토큰의 유저 정보가 일치하지 않습니다."),
   UNAUTHORIZED_TOKEN_EXCEPTION(HttpStatus.UNAUTHORIZED.value(), "비정상적인 토큰입니다."),
   FORBIDDEN_EXCEPTION(HttpStatus.FORBIDDEN.value(), "비정상적인 접근입니다."),
+  ARGUMENT_EXCEED_EXCEPTION(HttpStatus.BAD_REQUEST.value(), "인자가 지정된 값을 초과합니다."),
   ;
   private final int status;
   private final String message;
