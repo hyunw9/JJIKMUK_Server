@@ -1,4 +1,4 @@
-package com.mju.capstone.food.history.dto;
+package com.mju.capstone.food.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
