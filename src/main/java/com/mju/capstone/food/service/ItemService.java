@@ -5,9 +5,16 @@ import com.mju.capstone.food.dto.response.ItemResponse;
 import com.mju.capstone.food.entity.Item;
 import com.mju.capstone.food.event.HistoryEvent;
 import com.mju.capstone.food.repository.ItemRepository;
+import com.mju.capstone.global.exception.NotFoundException;
+import com.mju.capstone.global.response.message.ErrorMessage;
 import com.mju.capstone.global.security.util.SecurityUtil;
 import com.mju.capstone.member.entity.Member;
 import com.mju.capstone.member.service.MemberService;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -40,6 +47,27 @@ public class ItemService {
     return ItemResponse.of(item.getId(), item.getName(), item.getKcal(), item.getCarbohydrate(),
         item.getProtein(),
         item.getFat(), item.getFileName());
+  }
+
+  public List<ItemResponse> findItemHistoryByDate(LocalDate date) {
+    Member member = memberService.findByEmail(SecurityUtil.getLoginUserEmail());
+
+    LocalDateTime start = date.atStartOfDay();
+    LocalDateTime end = date.atTime(LocalTime.MAX);
+
+    List<Item> itemList = findByMemberAndDateTime(member, start, end);
+
+    return itemList.stream().map(item ->
+        ItemResponse.of(item.getId(), item.getName(), item.getKcal(), item.getCarbohydrate(),
+            item.getProtein(), item.getFat(), item.getFileName())
+    ).collect(Collectors.toUnmodifiableList());
+  }
+
+  private List<Item> findByMemberAndDateTime(Member member, LocalDateTime start,
+      LocalDateTime end) {
+    return itemRepository.findItemByMemberAndLocalDateTimeBetween(member, start, end).orElseThrow(
+        () -> new NotFoundException(ErrorMessage.ARGUMENT_NOT_FOUND)
+    );
   }
 
 }
