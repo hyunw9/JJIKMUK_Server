@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorMessage {
 
   MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND.value(),"ID에 해당하는 멤버가 존재하지 않습니다."),
+  ARGUMENT_NOT_FOUND(HttpStatus.NOT_FOUND.value(),"해당하는 인자가 존재하지 않습니다."),
   INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(),"내부 서버 오류"),
   ALREADY_REGISTERED_ERROR(HttpStatus.BAD_REQUEST.value(), "이미 존재하는 유저입니다."),
   REFRESH_TOKEN_NOT_VALID(HttpStatus.UNAUTHORIZED.value(), "Refresh Token이 유효하지 않습니다."),
