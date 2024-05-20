@@ -10,4 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
   Optional<List<Item>> findItemByMemberAndLocalDateTimeBetween(Member member,LocalDateTime start, LocalDateTime end);
+
+  List<Item> findAllByNameContains(String name);
 }
