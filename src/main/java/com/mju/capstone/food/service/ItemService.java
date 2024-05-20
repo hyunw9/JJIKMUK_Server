@@ -70,4 +70,12 @@ public class ItemService {
     );
   }
 
+  public List<ItemResponse> searchItemsByString(String itemName) {
+
+    List<Item> foundItemList = itemRepository.findAllByNameContains(itemName);
+    return foundItemList.stream().map(
+        item -> ItemResponse.of(item.getId(), item.getName(), item.getKcal(),
+            item.getCarbohydrate(), item.getProtein(), item.getFat(), item.getFileName()))
+        .collect(Collectors.toUnmodifiableList());
+  }
 }
