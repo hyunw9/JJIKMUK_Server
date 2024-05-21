@@ -1,5 +1,6 @@
 package com.mju.capstone.food.controller;
 
+import com.mju.capstone.food.dto.response.FoodResponse;
 import com.mju.capstone.food.service.StaticFoodService;
 import com.mju.capstone.global.response.ControllerMessage;
 import com.mju.capstone.global.response.message.SuccessMessage;
@@ -29,7 +30,7 @@ public class FoodController {
   @GetMapping("/foods/string")
   @Operation(
       summary = "음식 메뉴 검색",
-      description = "음식 메뉴 데이터베이스에서 존재하는 음식을 검색합니다. "
+      description = "음식 메뉴 데이터베이스에서 존재하는 음식을 검색해 문자열로 반환합니다.. "
   )
   @ApiResponse(
       responseCode = "200",
@@ -44,6 +45,25 @@ public class FoodController {
   ){
     return ResponseEntity.status(HttpStatus.OK)
         .body(ControllerMessage.of(SuccessMessage.OK,foodService.searchFoodNameByString(itemName)));
+  }
+
+  @GetMapping("/food")
+  @Operation(
+      summary = "음식 정보 검색",
+      description = "음식 메뉴 데이터베이스에서 존재하는 음식의 정보를 검색합니다. "
+  )
+  @ApiResponse(
+      responseCode = "200",
+      description = "조회 성공",
+          content = @Content(
+              schema = @Schema(implementation = FoodResponse.class))
+  )
+  public ResponseEntity<?> getItemInfoByName(
+      @Parameter(required = true, example = "들깨국")
+      @RequestBody String itemName
+  ){
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(ControllerMessage.of(SuccessMessage.OK,foodService.findFoodInfo(itemName)));
   }
 
 }

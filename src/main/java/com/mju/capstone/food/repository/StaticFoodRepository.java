@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface StaticFoodRepository extends JpaRepository<Food,String> {
 
   List<Food> findFoodNameByNameLike(String searchName);
+
+  Food findFoodByName(String foodName);
 }
