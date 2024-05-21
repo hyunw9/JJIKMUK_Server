@@ -1,7 +1,9 @@
 package com.mju.capstone.food.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.util.Objects;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,23 +12,32 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
+@Table(name = "menu_final")
 public class Food {
 
   @Id
-  private String id;
+  @Column(name = "food_id")
+  private String food_id;
 
+  @Column(name = "name")
   private String name;
 
+  @Column(name = "main_menu")
   private String main_menu;
 
+  @Column(name = "kcal")
   private int kcal;
 
+  @Column(name = "carbohydrate")
   private int carbohydrate;
 
+  @Column(name = "protein")
   private int protein;
 
+  @Column(name = "fat")
   private int fat;
 
+  @Column(name = "img_url")
   private String imgUrl;
 
   @Builder
@@ -55,13 +66,13 @@ public class Food {
     }
     Food food = (Food) o;
     return kcal == food.kcal && carbohydrate == food.carbohydrate && protein == food.protein
-        && fat == food.fat && Objects.equals(id, food.id) && Objects.equals(name,
+        && fat == food.fat && Objects.equals(food_id, food.food_id) && Objects.equals(name,
         food.name) && Objects.equals(main_menu, food.main_menu) && Objects.equals(
         imgUrl, food.imgUrl);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, main_menu, kcal, carbohydrate, protein, fat, imgUrl);
+    return Objects.hash(food_id, name, main_menu, kcal, carbohydrate, protein, fat, imgUrl);
   }
 }

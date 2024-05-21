@@ -15,8 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -41,10 +41,10 @@ public class FoodController {
 
   public ResponseEntity<?> searchItemByItemName(
       @Parameter(required = true, example = "제육")
-      @RequestBody String itemName
+      @RequestParam String name
   ){
     return ResponseEntity.status(HttpStatus.OK)
-        .body(ControllerMessage.of(SuccessMessage.OK,foodService.searchFoodNameByString(itemName)));
+        .body(ControllerMessage.of(SuccessMessage.OK,foodService.searchFoodNameByString(name)));
   }
 
   @GetMapping("/food")
@@ -60,10 +60,10 @@ public class FoodController {
   )
   public ResponseEntity<?> getItemInfoByName(
       @Parameter(required = true, example = "들깨국")
-      @RequestBody String itemName
+      @RequestParam String name
   ){
     return ResponseEntity.status(HttpStatus.OK)
-        .body(ControllerMessage.of(SuccessMessage.OK,foodService.findFoodInfo(itemName)));
+        .body(ControllerMessage.of(SuccessMessage.OK,foodService.findFoodInfo(name)));
   }
 
 }
