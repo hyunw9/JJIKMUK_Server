@@ -1,16 +1,12 @@
 package com.mju.capstone.food.controller;
 
 import com.mju.capstone.food.dto.request.ItemCreateRequest;
-import com.mju.capstone.food.dto.response.ItemResponse;
 import com.mju.capstone.food.service.ItemService;
+import com.mju.capstone.food.service.StaticFoodService;
 import com.mju.capstone.global.response.ControllerMessage;
 import com.mju.capstone.global.response.message.SuccessMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1")
-@Tag(name = "Food")
+@Tag(name = "Item", description = "사용자가 입력한 음식")
 public class ItemController {
 
   private final ItemService itemService;
+  private final StaticFoodService foodService;
 
   @PostMapping("/item")
   @Operation(
@@ -56,23 +53,4 @@ public class ItemController {
         .body(ControllerMessage.of(SuccessMessage.OK, itemService.findItemHistoryByDate(date)));
   }
 
-  @GetMapping("/items")
-  @Operation(
-      summary = "음식 메뉴 검색",
-      description = "음식 메뉴 데이터베이스에서 존재하는 음식을 검색합니다. "
-  )
-  @ApiResponse(
-      responseCode = "200",
-      description = "조회 성공",
-      content = @Content(
-          mediaType = "application/json",
-          array = @ArraySchema(schema = @Schema(implementation = ItemResponse.class))))
-
-  public ResponseEntity<?> searchItemByItemName(
-      @Parameter(required = true, example = "제육")
-      @RequestParam String itemName
-  ){
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(ControllerMessage.of(SuccessMessage.OK,itemService.searchItemsByString(itemName)));
-  }
 }
