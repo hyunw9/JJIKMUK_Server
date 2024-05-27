@@ -21,7 +21,7 @@ public class GptManagerImpl implements GptManager {
   }
 
   public RecommendResponse sendOpenAIRequest(String request) {
-    String url = "http://localhost:8000/api/v1/recommend/chat";
+    String url = "http://15.165.22.20:8000/api/v1/recommend/chat";
 
     Map<String, String> requestBody = new HashMap<>();
     requestBody.put("content", request);
