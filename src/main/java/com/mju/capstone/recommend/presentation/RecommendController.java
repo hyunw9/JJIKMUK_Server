@@ -41,7 +41,7 @@ public class RecommendController {
   public ResponseEntity<?> getMenuRecommendation(
       @RequestBody MenuRecommendRequest menuRecommendRequest
   ) {
-    return ResponseEntity.status(HttpStatus.OK)
+    return ResponseEntity.status(HttpStatus.CREATED)
         .body(ControllerMessage.of(SuccessMessage.CREATED_SUCCESS,
             chatService.getChatResponse(menuRecommendRequest)));
   }
