@@ -30,7 +30,7 @@ public class StaticFoodService {
     Food food = findFoodByName(name);
     return FoodResponse.of(food.getName(), food.getKcal(), food.getCarbohydrate(),
         food.getProtein(),
-        food.getFat(), food.getImgUrl());
+        food.getFat(), food.getImgUrl(),food.getAmount(),food.getServing());
   }
 
   public Food findFoodByName(String name) {

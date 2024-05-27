@@ -40,9 +40,15 @@ public class Food {
   @Column(name = "img_url")
   private String imgUrl;
 
+  @Column(name = "amount")
+  private int amount;
+
+  @Column(name = "serving")
+  private int serving;
+
   @Builder
   public Food(String name, String main_menu, int kcal, int carbohydrate, int protein, int fat,
-      String imgUrl) {
+      String imgUrl, int amount) {
     this.name = name;
     this.main_menu = main_menu;
     this.kcal = kcal;
@@ -50,6 +56,7 @@ public class Food {
     this.protein = protein;
     this.fat = fat;
     this.imgUrl = imgUrl;
+    this.amount = amount;
   }
 
   public void insertImgUrl(String imgUrl){
