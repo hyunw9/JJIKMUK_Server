@@ -19,7 +19,7 @@ public class GptManagerImpl implements GptManager {
 
   private final RestTemplate restTemplate;
 
-  @Value("${local-server.url}")
+  @Value("${python-server.url}")
   private String server_url;
 
   public GptManagerImpl(RestTemplate restTemplate) {
