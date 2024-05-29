@@ -8,68 +8,45 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FemaleCalculator implements CalorieCalculator {
 
-  private static final double DEFAULT_COEFFICIENT = 447.593;
-  private static final double WEIGHT_COEFFICIENT = 9.247;
-  private static final double HEIGHT_COEFFICIENT = 3.098;
-  private static final double AGE_COEFFICIENT = 4.330;
+  private static final double DEFAULT_COEFFICIENT = 354;
+  private static final double COEFFICIENT_1 = 6.91;
+  private static final double COEFFICIENT_2 = 9.36;
+  private static final double COEFFICIENT_3 = 726;
+  private static double[] pa = {0, 1.0, 1.12, 1.27};
+  private static int[] dietKcal = {0, -1000, -500, 0, 500, 1000};
 
   private int weight;
   private int age;
-  private int height;
+  private double height;
   private int level;
   private int dietPlan;
 
   @Builder
   public FemaleCalculator(int weight, int birth, int height, int level, int dietPlan) {
     this.weight = weight;
-    this.age = LocalDateTime.now().getYear()-birth;
-    this.height = height;
+    this.age = LocalDateTime.now().getYear() - birth;
+    this.height =  height / 100;
     this.level = level;
     this.dietPlan = dietPlan;
   }
 
   @Override
   public int calculateInitialUserCalorie() {
-    double BMR =  DEFAULT_COEFFICIENT + (WEIGHT_COEFFICIENT * weight) +
-        (HEIGHT_COEFFICIENT * height) - (AGE_COEFFICIENT * age);
-    log.info("BMR : "+ BMR);
-    log.info("level :  "+level);
-    double TDEE = BMR;
+    double kcal = DEFAULT_COEFFICIENT -
+        COEFFICIENT_1 * age + pa[level] * (COEFFICIENT_2 * weight + COEFFICIENT_3 * height);
+    log.info("kcal: " + kcal);
 
-    if (level == 1) {
-      TDEE *= 1.2;
-    } else if (level == 2) {
-      TDEE *= 1.375;
-    } else if (level == 3) {
-      TDEE *= 1.9;
-    }else if(level == 4){
-      TDEE *= 1.725;
-    }else if(level ==5){
-      TDEE *= 1.9;
-    }
-
-    log.info("TDEE: "+TDEE);
-
-    double totalTDEE = TDEE;
-    if (dietPlan == 1) {
-      totalTDEE -=1000;
-    } else if (dietPlan == 2) {
-      totalTDEE-= 500;
-    } else if (dietPlan == 4) {
-      totalTDEE += 500;
-    } else if (dietPlan == 5) {
-      totalTDEE += 1000;
-    }
-    log.info("TOTAL TDEE : "+ (int)totalTDEE);
-    return (int) totalTDEE;
+    kcal += dietKcal[dietPlan];
+    log.info("TOTAL kcal : " + (int) kcal);
+    return (int) kcal;
   }
 
-  public NutritionResponse calculateNutrition(int kcal){
+  public NutritionResponse calculateNutrition(int kcal) {
 
-    int carbohydrate = (int)((kcal * 0.5)/4);
-    int protein = (int)((kcal * 0.3)/4);
-    int fat = (int)((kcal * 0.2)/9);
+    int carbohydrate = (int) ((kcal * 0.5) / 4);
+    int protein = (int) ((kcal * 0.3) / 4);
+    int fat = (int) ((kcal * 0.2) / 9);
 
-    return NutritionResponse.from(kcal,carbohydrate,protein,fat);
+    return NutritionResponse.from(kcal, carbohydrate, protein, fat);
   }
 }
