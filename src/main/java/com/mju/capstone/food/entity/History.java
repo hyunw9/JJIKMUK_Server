@@ -1,5 +1,6 @@
 package com.mju.capstone.food.entity;
 
+import com.mju.capstone.food.event.HistoryEvent;
 import com.mju.capstone.member.entity.Member;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -47,11 +48,11 @@ public class History {
     this.modifiedAt = LocalDateTime.now();
   }
 
-  public void updateHistory(int kcal, int carbohydrate, int protein, int fat){
-    this.tot_kcal+=kcal;
-    this.tot_carbohydrate+=carbohydrate;
-    this.tot_protein+=protein;
-    this.tot_fat+=fat;
+  public void updateHistory(HistoryEvent historyEvent){
+    this.tot_kcal+= historyEvent.getTotalKcal();
+    this.tot_carbohydrate+=historyEvent.getTotalCarbohydrate();
+    this.tot_protein+=historyEvent.getTotalProtein();
+    this.tot_fat+= historyEvent.getTotalFat();
   }
 
   public History(Member member){

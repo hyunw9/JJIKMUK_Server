@@ -69,8 +69,6 @@ public class HistoryService {
       history = new History(member);
       historyRepository.save(history);
     }
-    history.updateHistory(historyEvent.getKcal(), historyEvent.getCarbohydrate(),
-        historyEvent.getProtein(), historyEvent.getFat());
-
+    history.updateHistory(historyEvent);
   }
 }

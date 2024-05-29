@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -34,7 +35,7 @@ public class ItemController {
       summary = "유저가 새로 섭취한 음식 등록",
       description = "유저가 섭취한 음식을 등록하고, 히스토리가 존재하지 않다면 생성 후 갱신, 존재한다면 갱신합니다."
   )
-  public ResponseEntity<?> postItem(@RequestBody ItemCreateRequest itemCreateRequest) {
+  public ResponseEntity<?> postItem(@RequestBody List<ItemCreateRequest> itemCreateRequest) {
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(ControllerMessage.of(SuccessMessage.CREATED_SUCCESS,
             itemService.uploadItem(itemCreateRequest)));
