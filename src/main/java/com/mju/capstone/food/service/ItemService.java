@@ -2,6 +2,7 @@ package com.mju.capstone.food.service;
 
 import com.mju.capstone.food.dto.request.ItemCreateRequest;
 import com.mju.capstone.food.dto.response.ItemResponse;
+import com.mju.capstone.food.dto.response.TotalNutritionResponse;
 import com.mju.capstone.food.entity.Item;
 import com.mju.capstone.food.event.HistoryEvent;
 import com.mju.capstone.food.repository.ItemRepository;
@@ -29,24 +30,25 @@ public class ItemService {
   private final MemberService memberService;
 
   @Transactional
-  public ItemResponse uploadItem(ItemCreateRequest request) {
+  public TotalNutritionResponse uploadItem(List<ItemCreateRequest> request) {
 
     String email = SecurityUtil.getLoginUserEmail();
     Member member = memberService.findByEmail(email);
 
     //item 은 히스토리 안가져도 됨.
 
-    Item item = itemRepository.save(Item.createItem(member, request.name(),
-        request.amount(), request.serving(), request.kcal(), request.carbohydrate(),
-        request.protein(), request.fat(), request.fileName()));
+    List<Item> itemList = request.stream().map(
+            item -> Item.createItem(member, item.name(), item.amount(), item.serving(), item.kcal(),
+                item.carbohydrate(), item.protein(), item.fat(), item.fileName()))
+        .collect(Collectors.toUnmodifiableList());
+    itemRepository.saveAll(itemList);
 
-    publisher.publishEvent(
-        new HistoryEvent(this, email, item.getKcal(), item.getCarbohydrate(),
-            item.getProtein(), item.getFat()));
+    HistoryEvent event = new HistoryEvent(this, member.getEmail(), itemList);
+    //영양소 합계 전파
+    publisher.publishEvent(event);
 
-    return ItemResponse.of(item.getId(), item.getName(), item.getKcal(), item.getCarbohydrate(),
-        item.getProtein(),
-        item.getFat(), item.getFileName());
+    return TotalNutritionResponse.of(event.getTotalKcal(), event.getTotalCarbohydrate(),
+        event.getTotalProtein(), event.getTotalFat());
   }
 
   public List<ItemResponse> findItemHistoryByDate(LocalDate date) {
@@ -74,8 +76,8 @@ public class ItemService {
 
     List<Item> foundItemList = itemRepository.findAllByNameContains(itemName);
     return foundItemList.stream().map(
-        item -> ItemResponse.of(item.getId(), item.getName(), item.getKcal(),
-            item.getCarbohydrate(), item.getProtein(), item.getFat(), item.getFileName()))
+            item -> ItemResponse.of(item.getId(), item.getName(), item.getKcal(),
+                item.getCarbohydrate(), item.getProtein(), item.getFat(), item.getFileName()))
         .collect(Collectors.toUnmodifiableList());
   }
 }

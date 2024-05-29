@@ -7,7 +7,6 @@ public record HistoryResponse(
 
     @Schema(description = "History PK")
     Long historyId,
-
     int tot_kcal,
     int tot_carbohydrate,
     int tot_protein,
