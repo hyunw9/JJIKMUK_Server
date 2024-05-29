@@ -2,16 +2,17 @@ package com.mju.capstone.recommend.dto.response;
 
 public record TotalRecommendResponse(
     String name,
-    int gram,
     int kcal,
     int carbohydrate,
     int protein,
     int fat,
-    String imgUrl
+    String imgUrl,
+    int amount,
+    int serving
 ) {
 
-  public static TotalRecommendResponse of(String name, int gram, int kcal, int carbohydrate,
-      int protein, int fat, String imgUrl) {
-    return new TotalRecommendResponse(name, gram, kcal, carbohydrate, protein, fat, imgUrl);
+  public static TotalRecommendResponse of(String name, int kcal, int carbohydrate,
+      int protein, int fat, String imgUrl, int amount, int serving) {
+    return new TotalRecommendResponse(name, kcal, carbohydrate, protein, fat, imgUrl, amount, serving);
   }
 }

@@ -8,6 +8,7 @@ import com.mju.capstone.recommend.domain.GptManager;
 import com.mju.capstone.recommend.dto.request.MenuRecommendRequest;
 import com.mju.capstone.recommend.dto.response.RecommendResponse;
 import com.mju.capstone.recommend.dto.response.TotalRecommendResponse;
+import com.mju.capstone.recommend.repository.FoodRepositoryImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class ChatService {
   private final AppConfig appConfig;
   private final ObjectMapper objectMapper;
   private final StaticFoodService staticFoodService;
+  private final FoodRepositoryImpl foodRepository;
 
   public TotalRecommendResponse getChatResponse(MenuRecommendRequest menuRecommendRequest) {
     StringBuilder sb = new StringBuilder();
@@ -28,19 +30,17 @@ public class ChatService {
     sb.append(menuRecommendRequest.mealTime()).append("에 먹을 ")
         .append(menuRecommendRequest.tasteType()).append("한 ").append(menuRecommendRequest.menuCountry())
         .append("을 추천해줘.\n")
-        .append("답은 1개 여야해. 응답 형식: JSON  { name: String, gram:int, kcal: int, carbohydrate: int, protein: int, fat: int }");
+        .append("답은 1개 여야하고, 다양하게 추천해줘. 응답 형식: JSON  { name: String }");
 
-    RecommendResponse recommend = gptManager.sendOpenAIRequest(sb.toString());
+    RecommendResponse response = gptManager.sendOpenAIRequest(sb.toString());
     log.info(sb.toString());
-
-    return setImgUrl(recommend);
+    return getTotalRecommendResponseByFoodName(response);
   }
 
-  public TotalRecommendResponse setImgUrl(RecommendResponse recommend) {
+  public TotalRecommendResponse getTotalRecommendResponseByFoodName(RecommendResponse response){
+    Food food = foodRepository.findByName(response.name());
 
-    Food food = staticFoodService.findFoodByName(recommend.name());
-
-    return TotalRecommendResponse.of(recommend.name(), recommend.gram(), recommend.kcal(),
-        recommend.carbohydrate(), recommend.protein(), recommend.fat(), food.getImgUrl());
+    return TotalRecommendResponse.of(food.getName(),food.getKcal(),
+        food.getCarbohydrate(), food.getProtein(), food.getFat(), food.getImgUrl(),food.getAmount(),food.getServing());
   }
 }
