@@ -69,4 +69,11 @@ public class HistoryService {
     }
     history.updateHistory(historyEvent);
   }
+
+  public History findUserHistory(){
+    String email = SecurityUtil.getLoginUserEmail();
+    Member member = memberService.findByEmail(email);
+    LocalDate now = LocalDate.now();
+    return historyRepository.findByMemberAndLocalDate(member,now);
+  }
 }

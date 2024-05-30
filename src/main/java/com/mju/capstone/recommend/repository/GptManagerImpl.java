@@ -35,7 +35,7 @@ public class GptManagerImpl implements GptManager {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(APPLICATION_JSON);
 
-    HttpEntity<Map<String,String>> requestHttpEntity = new HttpEntity<>(requestBody,headers);
+    HttpEntity<Map<String, String>> requestHttpEntity = new HttpEntity<>(requestBody, headers);
     return restTemplate.postForObject(url, requestHttpEntity, RecommendResponse.class);
   }
 }
