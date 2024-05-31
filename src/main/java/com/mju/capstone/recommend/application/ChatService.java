@@ -4,7 +4,6 @@ import com.mju.capstone.food.entity.Food;
 import com.mju.capstone.food.service.StaticFoodService;
 import com.mju.capstone.member.dto.response.GoalNutritionResponse;
 import com.mju.capstone.member.service.GoalService;
-import com.mju.capstone.member.service.MemberService;
 import com.mju.capstone.recommend.domain.GptManager;
 import com.mju.capstone.recommend.dto.request.MenuRecommendRequest;
 import com.mju.capstone.recommend.dto.response.SupposedNutrition;
@@ -22,7 +21,6 @@ public class ChatService {
 
   private final GptManager gptManager;
   private final StaticFoodService staticFoodService;
-  private final MemberService memberService;
   private final GoalService goalService;
 
   public List<TotalRecommendResponse> getChatResponse(MenuRecommendRequest menuRecommendRequest) {
@@ -46,10 +44,10 @@ public class ChatService {
   private String createNutritionPrompt(MenuRecommendRequest request,
       SupposedNutrition supposedNutrition) {
     return String.format(
-        "사용자가 %s에 %s로 먹을 주재료가 %s이고 영양소가 %d carbohydrate, %d protein, %d fat 을 만족할 수 있는 식단을 " +
-            "업로드한 파일 내에서 추천해줘. 응답 형식은 다른 말 없이 무조건 다음과 같아야 해 : JSON  [String]",
-        request.mealTime(), request.cookOrDelivery(), request.ingredient()
-        , supposedNutrition.carbohydrate(), supposedNutrition.protein(), supposedNutrition.fat()
+        "사용자가 %s에 %s로 먹을 식단을 추천해줘. %d carbohydrate, %d protein, %d fat 을 섭취해야 해. 사용자는 %s %s 요리를 선호해."
+            + " 응답 형식은 다른 말 없이 무조건 다음과 같아야 해 : JSON [String]",
+        request.mealTime(),request.cookOrDelivery(),supposedNutrition.carbohydrate(),
+        supposedNutrition.protein(),supposedNutrition.fat(),request.tasteType(),request.ingredient()
     );
   }
 
