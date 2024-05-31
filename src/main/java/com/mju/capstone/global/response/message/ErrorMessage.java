@@ -19,7 +19,7 @@ public enum ErrorMessage {
   FORBIDDEN_EXCEPTION(HttpStatus.FORBIDDEN.value(), "비정상적인 접근입니다."),
   ARGUMENT_EXCEED_EXCEPTION(HttpStatus.BAD_REQUEST.value(), "인자가 지정된 값을 초과합니다."),
   FOOD_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "해당하는 이름의 음식이 없습니다."),
-
+  RECOMMEND_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "추천이 존재하지 않습니다.")
   ;
   private final int status;
   private final String message;
