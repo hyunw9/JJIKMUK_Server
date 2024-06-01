@@ -8,6 +8,8 @@ import com.mju.capstone.recommend.domain.GptManager;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.mju.capstone.recommend.dto.response.Menu;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -33,7 +35,7 @@ public class GptManagerImpl implements GptManager {
     this.restTemplate = restTemplate;
   }
 
-  public List<String> sendOpenAIRequest(String request) {
+  public List<Menu> sendOpenAIRequest(String request) {
 
     String url = server_url;
     Map<String, String> requestBody = new HashMap<>();
@@ -45,11 +47,11 @@ public class GptManagerImpl implements GptManager {
 
 //    ResponseModel response= restTemplate.postForObject(url, requestHttpEntity, ResponseModel.class);
 
-    ResponseEntity<List<String>> responseEntity =
-        restTemplate.exchange(url,HttpMethod.POST,requestHttpEntity,new ParameterizedTypeReference<List<String>>() {});
+    ResponseEntity<List<Menu>> responseEntity =
+        restTemplate.exchange(url,HttpMethod.POST,requestHttpEntity,new ParameterizedTypeReference<List<Menu>>() {});
 
     log.info(responseEntity.getBody().toString());
-    List<String> recommendResponse = responseEntity.getBody();
+    List<Menu> recommendResponse = responseEntity.getBody();
 
     if (recommendResponse.isEmpty() || recommendResponse == null) {
       throw new BusinessException(ErrorMessage.RECOMMEND_NOT_FOUND);

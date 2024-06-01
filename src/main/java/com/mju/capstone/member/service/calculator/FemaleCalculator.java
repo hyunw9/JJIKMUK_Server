@@ -43,9 +43,9 @@ public class FemaleCalculator implements CalorieCalculator {
 
   public NutritionResponse calculateNutrition(int kcal) {
 
-    int carbohydrate = (int) ((kcal * 0.5) / 4);
-    int protein = (int) ((kcal * 0.3) / 4);
-    int fat = (int) ((kcal * 0.2) / 9);
+    int carbohydrate = (int) ((kcal * 0.6) / 4);
+    int protein = (int) ((kcal * 0.1) / 4);
+    int fat = (int) ((kcal * 0.3) / 9);
 
     return NutritionResponse.from(kcal, carbohydrate, protein, fat);
   }
