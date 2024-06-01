@@ -56,7 +56,7 @@ public class ChatService {
       prefPrompt = "사용자는 " + tasteType + " " + menuCountry + " " + ingredient + " 음식을 선호해.";
     }
     return String.format(
-        "사용자가 %s %s 먹을 식단을 추천해줘. %d carbohydrate, %d protein, %d fat 을 섭취해야 해." + prefPrompt
+        "사용자가 %s %s 먹을 식단을 업로드한 파일 내에서 추천해줘. %d carbohydrate, %d protein, %d fat 을 섭취해야 해." + prefPrompt
             + " 응답 형식은 다른 말 없이 무조건 다음과 같아야 해 : JSON [String , int]",
         mealTime,request.cookOrDelivery(),supposedNutrition.carbohydrate(),
         supposedNutrition.protein(),supposedNutrition.fat()
