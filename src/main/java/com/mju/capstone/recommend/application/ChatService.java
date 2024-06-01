@@ -45,17 +45,21 @@ public class ChatService {
   private String createNutritionPrompt(MenuRecommendRequest request,
       SupposedNutrition supposedNutrition) {
     String prefPrompt = "";
-    if(request.tasteType().equals("") && request.ingredient().equals("")){
+    String mealTime = request.tasteType().equals("상관없음") ? "" : request.mealTime();
+    String tasteType = request.tasteType().equals("상관없음") ? "" : request.tasteType();
+    String menuCountry = request.menuCountry().equals("상관없음") ? "" : request.menuCountry();
+    String ingredient = request.ingredient().equals("상관없음") ? "" : request.ingredient();
+    if(tasteType.equals("") && menuCountry.equals("") && ingredient.equals("")){
       prefPrompt = "사용자는 모든 음식을 선호해.";
     }
     else{
-      prefPrompt = "사용자는 " + request.tasteType() + " " + request.ingredient() + " 음식을 선호해.";
+      prefPrompt = "사용자는 " + tasteType + " " + menuCountry + " " + ingredient + " 음식을 선호해.";
     }
     return String.format(
         "사용자가 %s %s 먹을 식단을 추천해줘. %d carbohydrate, %d protein, %d fat 을 섭취해야 해." + prefPrompt
             + " 응답 형식은 다른 말 없이 무조건 다음과 같아야 해 : JSON [String , int]",
-        request.mealTime(),request.cookOrDelivery(),supposedNutrition.carbohydrate(),
-        supposedNutrition.protein(),supposedNutrition.fat(),request.tasteType(),request.ingredient()
+        mealTime,request.cookOrDelivery(),supposedNutrition.carbohydrate(),
+        supposedNutrition.protein(),supposedNutrition.fat()
     );
   }
 
