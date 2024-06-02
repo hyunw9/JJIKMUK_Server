@@ -1,12 +1,13 @@
 package com.mju.capstone.auth.service;
 
+import static com.mju.capstone.auth.repository.entity.Role.USER;
+
 import com.mju.capstone.auth.dto.request.LoginReq;
-import com.mju.capstone.auth.dto.request.MemberReq;
+import com.mju.capstone.auth.dto.request.MemberSignUpRequest;
 import com.mju.capstone.auth.dto.response.LoginRes;
 import com.mju.capstone.auth.dto.response.MemberRes;
 import com.mju.capstone.auth.dto.util.AuthUtil;
-import com.mju.capstone.auth.event.RegistrationCompleteEvent;
-import com.mju.capstone.auth.repository.entity.Role;
+import com.mju.capstone.auth.event.CalculationEvent;
 import com.mju.capstone.global.exception.AuthException;
 import com.mju.capstone.global.response.message.ErrorMessage;
 import com.mju.capstone.global.security.provider.TokenProvider;
@@ -38,44 +39,48 @@ public class AuthService {
   private final ApplicationEventPublisher publisher;
 
   @Transactional
-  public MemberRes signup(MemberReq memberReq){
+  public MemberRes signup(MemberSignUpRequest memberSignUpRequest) {
 
-    if(memberRepository.existsByEmail(memberReq.email())){
+    if (memberRepository.existsByEmail(memberSignUpRequest.email())) {
       throw new AuthException(ErrorMessage.ALREADY_REGISTERED_ERROR);
     }
 
-    String password = passwordEncoder.encode(memberReq.password());
+    String password = passwordEncoder.encode(memberSignUpRequest.password());
 
     Member member = Member.builder()
-        .email(memberReq.email())
+        .email(memberSignUpRequest.email())
+        .nickname(memberSignUpRequest.nickname())
         .password(password)
-        .role(Role.valueOf("USER"))
-        .weight(memberReq.weight())
-        .height(memberReq.height())
-        .birth(memberReq.birth())
-        .gender(memberReq.gender())
-        .dietPlan(memberReq.dietPlan())
-        .nickname(memberReq.nickname())
+        .role(USER)
+        .weight(memberSignUpRequest.weight())
+        .height(memberSignUpRequest.height())
+        .birth(memberSignUpRequest.birth())
+        .gender(memberSignUpRequest.gender())
+        .level(memberSignUpRequest.level())
+        .dietPlan(memberSignUpRequest.dietPlan())
         .build();
 
     memberRepository.save(member);
 
-    publisher.publishEvent(new RegistrationCompleteEvent(this,memberReq));
+    publisher.publishEvent(new CalculationEvent(this,
+        com.mju.capstone.member.dto.request.NutritionCalculatorRequest.of(
+            memberSignUpRequest.email(), memberSignUpRequest.birth(), memberSignUpRequest.height(),
+            memberSignUpRequest.weight(),
+            memberSignUpRequest.gender(), memberSignUpRequest.level(),
+            memberSignUpRequest.dietPlan()
+        )));
 
     return AuthUtil.of(member);
-
   }
 
   @Transactional
-  public LoginRes login(LoginReq loginReq){
+  public LoginRes login(LoginReq loginReq) {
     UsernamePasswordAuthenticationToken authenticationToken =
-        new UsernamePasswordAuthenticationToken(loginReq.email(),loginReq.password());
+        new UsernamePasswordAuthenticationToken(loginReq.email(), loginReq.password());
 
     Authentication authentication = authenticationManagerBuilder.getObject()
         .authenticate(authenticationToken);
-
     TokenRes tokenRes = tokenProvider.generateToken(authentication);
-
     RefreshToken refreshToken = RefreshToken.builder()
         .key(authentication.getName())
         .value(tokenRes.refreshToken())
@@ -92,10 +97,10 @@ public class AuthService {
   }
 
   @Transactional
-  public TokenRes reissue(TokenReq tokenReq){
+  public TokenRes reissue(TokenReq tokenReq) {
 
     //1. refresh token 검증
-    if( !tokenProvider.validateToken(tokenReq.refreshToken())){
+    if (!tokenProvider.validateToken(tokenReq.refreshToken())) {
       throw new AuthException(ErrorMessage.REFRESH_TOKEN_NOT_VALID);
     }
 
@@ -104,10 +109,10 @@ public class AuthService {
 
     //3. 저장소에서 Member ID를 기반으로 Refresh Token 값 가져오기
     RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName())
-        .orElseThrow(()-> new AuthException(ErrorMessage.USER_ALREADY_LOGOUT));
+        .orElseThrow(() -> new AuthException(ErrorMessage.USER_ALREADY_LOGOUT));
 
     //4. Refresh Token 일치 검증
-    if(!refreshToken.getValue().equals(tokenReq.refreshToken())){
+    if (!refreshToken.getValue().equals(tokenReq.refreshToken())) {
       throw new AuthException(ErrorMessage.UNVALID_TOKEN_EXCEPTIION);
     }
 
@@ -122,8 +127,9 @@ public class AuthService {
     return tokenRes;
   }
 
-  public Long getId(Long id){
-    Member member = memberRepository.findById(id).orElseThrow(()->new NoSuchElementException("해당 아이디를 가진 유저가 없습니다."));
+  public Long getId(Long id) {
+    Member member = memberRepository.findById(id)
+        .orElseThrow(() -> new NoSuchElementException("해당 아이디를 가진 유저가 없습니다."));
     return member.getId();
   }
 
