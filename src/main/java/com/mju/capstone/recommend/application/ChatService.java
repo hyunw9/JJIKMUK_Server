@@ -45,7 +45,6 @@ public class ChatService {
   private String createNutritionPrompt(MenuRecommendRequest request,
       SupposedNutrition supposedNutrition) {
     String prefPrompt = "";
-    String mealTime = request.mealTime().equals("상관없음") ? "" : request.mealTime();
     String tasteType = request.tasteType().equals("상관없음") ? "" : request.tasteType();
     String menuCountry = request.menuCountry().equals("상관없음") ? "" : request.menuCountry();
     String ingredient = request.ingredient().equals("상관없음") ? "" : request.ingredient();
@@ -55,18 +54,21 @@ public class ChatService {
     else{
       prefPrompt = "사용자는 " + tasteType + " " + menuCountry + " " + ingredient + " 음식을 선호해.";
     }
-    return String.format(
-        "사용자가 %s %s 식단을 업로드한 파일 내에서 추천해줘. %d carbohydrate, %d protein, %d fat 을 섭취해야 해." + prefPrompt
-            + " 응답 형식은 다른 말 없이 무조건 다음과 같아야 해 : JSON [String , int]",
-        mealTime,request.cookOrDelivery(),supposedNutrition.carbohydrate(),
-        supposedNutrition.protein(),supposedNutrition.fat()
+    String result = String.format(
+            "사용자가 %s으로 %s 해 먹을 식단을 업로드한 파일 내에서 추천해줘. 탄수화물 %dg, 단백질 %dg, 지방 %dg 을 섭취해야 해." + prefPrompt
+                    + " 응답 형식은 다른 말 없이 무조건 다음과 같아야 해 : JSON [String , int]",
+            request.mealTime(),request.cookOrDelivery(),supposedNutrition.carbohydrate(),
+            supposedNutrition.protein(),supposedNutrition.fat()
     );
+    log.info(result);
+    return result;
   }
 
   public TotalRecommendResponse getTotalRecommendResponseByFoodName(Menu response) {
     Food food = staticFoodService.findFoodByName(response.name());
     int amount = response.amount();
     int kcal = (int) ((double) food.getKcal() * amount / 100);
+    log.info(String.valueOf(food.getKcal()) + " " + String.valueOf(kcal));
     int carbo = (int) ((double) food.getCarbohydrate() * amount / 100);
     int protein = (int) ((double) food.getProtein() * amount / 100);
     int fat = (int) ((double) food.getFat() * amount / 100);
