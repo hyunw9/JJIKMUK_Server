@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 @Schema(description = "회원 가입을 Request Body")
-public record MemberReq(
+public record MemberSignUpRequest(
 
     @Schema(description = "사용자 이메일",example = "rkdgusdnr32@gmail.com")
     String email,
@@ -29,7 +29,7 @@ public record MemberReq(
 ) {
 
   @Builder
-  public MemberReq(String email, String password, String nickname, int height, int weight,
+  public MemberSignUpRequest(String email, String password, String nickname, int height, int weight,
       Gender gender, int birth, int level, int dietPlan) {
     this.email = email;
     this.password = password;
