@@ -1,5 +1,6 @@
 package com.mju.capstone.member.entity;
 
+import com.mju.capstone.member.dto.response.NutritionResponse;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,5 +39,12 @@ public class Goal {
     this.carbohydrate = carbohydrate;
     this.kcal = kcal;
     this.member = member;
+  }
+
+  public void updateGoal(NutritionResponse response){
+    this.kcal = response.kcal();
+    this.carbohydrate = response.carbohydrate();
+    this.protein = response.protein();
+    this.fat = response.fat();
   }
 }
