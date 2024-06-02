@@ -1,6 +1,7 @@
 package com.mju.capstone.member.entity;
 
 import com.mju.capstone.auth.repository.entity.Role;
+import com.mju.capstone.member.dto.request.MemberUpdateRequest;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -55,6 +56,54 @@ public class Member {
     this.birth = birth;
     this.level = level;
     this.dietPlan = dietPlan;
+  }
+
+  public boolean updateMemberInfo(MemberUpdateRequest updateRequest) {
+    boolean requiresRecalculation = false;
+
+    updateRequest.nickname().ifPresent(this::updateNickname);
+
+    if (updateRequest.password().isPresent()) {
+      updatePassword(updateRequest.password().get());
+    }
+
+    if (updateRequest.height().isPresent() && updateRequest.height().get() != this.height) {
+      this.height = updateRequest.height().get();
+      requiresRecalculation = true;
+    }
+    if (updateRequest.weight().isPresent() && updateRequest.weight().get() != this.weight) {
+      this.weight = updateRequest.weight().get();
+      requiresRecalculation = true;
+    }
+    if (updateRequest.gender().isPresent() && updateRequest.gender().get() != this.gender) {
+      this.gender = updateRequest.gender().get();
+      requiresRecalculation = true;
+    }
+    if (updateRequest.birth().isPresent() && updateRequest.birth().get() != this.birth) {
+      this.birth = updateRequest.birth().get();
+      requiresRecalculation = true;
+    }
+    if (updateRequest.level().isPresent() && updateRequest.level().get() != this.level) {
+      this.level = updateRequest.level().get();
+      requiresRecalculation = true;
+    }
+    if (updateRequest.dietPlan().isPresent() && updateRequest.dietPlan().get() != this.dietPlan) {
+      this.dietPlan = updateRequest.dietPlan().get();
+      requiresRecalculation = true;
+    }
+    return requiresRecalculation;
+  }
+
+  private void updatePassword(String password) {
+    if (password != null && !password.isEmpty()) {
+      this.password = password;
+    }
+  }
+
+  private void updateNickname(String nickname) {
+    if (nickname != null && !nickname.isEmpty()) {
+      this.nickname = nickname;
+    }
   }
 
 }

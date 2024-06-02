@@ -1,6 +1,6 @@
 package com.mju.capstone.member.service;
 
-import com.mju.capstone.auth.event.RegistrationCompleteEvent;
+import com.mju.capstone.auth.event.CalculationEvent;
 import com.mju.capstone.food.entity.History;
 import com.mju.capstone.food.service.HistoryService;
 import com.mju.capstone.global.exception.NotFoundException;
@@ -43,28 +43,47 @@ public class GoalService {
   }
 
   @EventListener
-  public void initializeMemberInfo(RegistrationCompleteEvent event) {
+  public void initializeMemberInfo(CalculationEvent event) {
     //칼로리 계산
     CalorieCalculator calorieCalculator = InitialCalorieCalculatorFactory.getCalorieCalculator(
-        event.getMemberReq());
-    String email = event.getMemberReq().email();
+        event.getRequest());
+    String email = event.getRequest().email();
     Member member = memberService.findByEmail(email);
 
-    log.info(event.getMemberReq().email());
+    log.info(email);
     log.info(calorieCalculator.calculateInitialUserCalorie() + "");
 
     NutritionResponse goalNutrition = calorieCalculator.calculateNutrition(
         calorieCalculator.calculateInitialUserCalorie());
 
-    Goal goal = Goal.builder()
-        .member(member)
-        .kcal(goalNutrition.kcal())
-        .carbohydrate(goalNutrition.carbohydrate())
-        .protein(goalNutrition.protein())
-        .fat(goalNutrition.fat())
-        .build();
-
+    Goal goal = figureGoalType(member,goalNutrition);
     Goal savedGoal = goalRepository.save(goal);
+  }
+
+  private Goal figureGoalType(Member member,NutritionResponse nutrition) {
+    boolean goalAlreadyExist = goalRepository.existsByMember(member);
+
+    if(goalAlreadyExist) {
+      return updateGoal(member,nutrition);
+    }else{
+      return createGoal(member,nutrition);
+    }
+  }
+
+  private Goal updateGoal(Member member, NutritionResponse nutrition) {
+    Goal goal = findGoalWithMember(member);
+    goal.updateGoal(nutrition);
+    return goal;
+  }
+
+  private Goal createGoal(Member member,NutritionResponse nutrition) {
+    return Goal.builder()
+        .member(member)
+        .kcal(nutrition.kcal())
+        .carbohydrate(nutrition.carbohydrate())
+        .protein(nutrition.protein())
+        .fat(nutrition.fat())
+        .build();
   }
 
   public GoalNutritionResponse getMemberGoal() {
@@ -77,11 +96,6 @@ public class GoalService {
     return GoalNutritionResponse.from(member.getNickname(), member.getDietPlan(),
         foundGoal.getKcal(),
         foundGoal.getCarbohydrate(), foundGoal.getProtein(), foundGoal.getFat());
-  }
-
-  private Goal findByMember(Member member) {
-    return goalRepository.findByMember(member)
-        .orElseThrow(() -> new NotFoundException(ErrorMessage.MEMBER_NOT_FOUND));
   }
 
   public SupposedNutrition calculateSupposedNutrition(GoalNutritionResponse memberGoal) {
@@ -109,5 +123,10 @@ public class GoalService {
     int protein = (int)(supposedNutrition.protein() * mealTimeRatios.get(mealTime));
     int fat = (int)(supposedNutrition.fat()* mealTimeRatios.get(mealTime));
     return SupposedNutrition.of(kcal,carbohydrate,protein,fat);
+  }
+
+  private Goal findByMember(Member member) {
+    return goalRepository.findByMember(member)
+        .orElseThrow(() -> new NotFoundException(ErrorMessage.MEMBER_NOT_FOUND));
   }
 }
