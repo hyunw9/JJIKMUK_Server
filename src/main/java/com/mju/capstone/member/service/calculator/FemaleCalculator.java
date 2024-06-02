@@ -12,14 +12,14 @@ public class FemaleCalculator implements CalorieCalculator {
   private static final double COEFFICIENT_1 = 6.91;
   private static final double COEFFICIENT_2 = 9.36;
   private static final double COEFFICIENT_3 = 726;
-  private static double[] pa = {0, 1.0, 1.12, 1.27};
-  private static int[] dietKcal = {0, -1000, -500, 0, 500, 1000};
+  private static final double[] pa = {0, 1.0, 1.12, 1.27};
+  private static final int[] dietKcal = {0, -1000, -500, 0, 500, 1000};
 
-  private int weight;
-  private int age;
-  private double height;
-  private int level;
-  private int dietPlan;
+  private final int weight;
+  private final int age;
+  private final double height;
+  private final int level;
+  private final int dietPlan;
 
   @Builder
   public FemaleCalculator(int weight, int birth, int height, int level, int dietPlan) {
