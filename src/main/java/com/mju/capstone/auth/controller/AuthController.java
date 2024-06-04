@@ -1,7 +1,7 @@
 package com.mju.capstone.auth.controller;
 
 import com.mju.capstone.auth.dto.request.LoginReq;
-import com.mju.capstone.auth.dto.request.MemberReq;
+import com.mju.capstone.auth.dto.request.MemberSignUpRequest;
 import com.mju.capstone.auth.service.AuthService;
 import com.mju.capstone.global.response.ControllerMessage;
 import com.mju.capstone.global.response.message.SuccessMessage;
@@ -26,10 +26,11 @@ public class AuthController {
 
   @Operation(summary = "회원가입", description = "사용자 회원가입 API")
   @PostMapping("/signup")
-  public ResponseEntity<?> signup(@RequestBody MemberReq memberReq) {
+  public ResponseEntity<?> signup(@RequestBody MemberSignUpRequest memberSignUpRequest) {
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(
-            ControllerMessage.of(SuccessMessage.CREATED_SUCCESS, (authService.signup(memberReq))));
+            ControllerMessage.of(SuccessMessage.CREATED_SUCCESS, (authService.signup(
+                memberSignUpRequest))));
   }
 
   @Operation(summary = "로그인", description = "로그인 API")

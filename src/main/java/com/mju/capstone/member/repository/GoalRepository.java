@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface GoalRepository extends JpaRepository<Goal,Long> {
 
   Optional<Goal> findByMember(Member member);
+
+  boolean existsByMember(Member member);
 }

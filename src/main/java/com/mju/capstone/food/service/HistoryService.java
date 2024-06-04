@@ -14,11 +14,9 @@ import java.util.HashMap;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 @RequiredArgsConstructor
 @Service
@@ -55,8 +53,8 @@ public class HistoryService {
     return historyMap;
   }
 
-  @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @EventListener
+  @Transactional
   public void updateHistory(HistoryEvent historyEvent) {
 
     Member member = memberService.findByEmail(historyEvent.getEmail());
@@ -69,8 +67,13 @@ public class HistoryService {
       history = new History(member);
       historyRepository.save(history);
     }
-    history.updateHistory(historyEvent.getKcal(), historyEvent.getCarbohydrate(),
-        historyEvent.getProtein(), historyEvent.getFat());
+    history.updateHistory(historyEvent);
+  }
 
+  public History findUserHistory(){
+    String email = SecurityUtil.getLoginUserEmail();
+    Member member = memberService.findByEmail(email);
+    LocalDate now = LocalDate.now();
+    return historyRepository.findByMemberAndLocalDate(member,now);
   }
 }

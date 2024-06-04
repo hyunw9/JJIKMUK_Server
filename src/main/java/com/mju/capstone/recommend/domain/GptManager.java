@@ -1,9 +1,11 @@
 package com.mju.capstone.recommend.domain;
 
-import com.mju.capstone.recommend.dto.response.RecommendResponse;
+import com.mju.capstone.recommend.dto.response.Menu;
+
+import java.util.List;
 
 public interface GptManager {
 
-  RecommendResponse sendOpenAIRequest(String prompt);
+  List<Menu> sendOpenAIRequest(String prompt);
 
 }

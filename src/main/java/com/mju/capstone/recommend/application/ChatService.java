@@ -1,13 +1,16 @@
 package com.mju.capstone.recommend.application;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mju.capstone.food.entity.Food;
 import com.mju.capstone.food.service.StaticFoodService;
-import com.mju.capstone.recommend.config.AppConfig;
+import com.mju.capstone.member.dto.response.GoalNutritionResponse;
+import com.mju.capstone.member.service.GoalService;
 import com.mju.capstone.recommend.domain.GptManager;
 import com.mju.capstone.recommend.dto.request.MenuRecommendRequest;
-import com.mju.capstone.recommend.dto.response.RecommendResponse;
+import com.mju.capstone.recommend.dto.response.Menu;
+import com.mju.capstone.recommend.dto.response.SupposedNutrition;
 import com.mju.capstone.recommend.dto.response.TotalRecommendResponse;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,29 +21,60 @@ import org.springframework.stereotype.Service;
 public class ChatService {
 
   private final GptManager gptManager;
-  private final AppConfig appConfig;
-  private final ObjectMapper objectMapper;
   private final StaticFoodService staticFoodService;
+  private final GoalService goalService;
 
-  public TotalRecommendResponse getChatResponse(MenuRecommendRequest menuRecommendRequest) {
-    StringBuilder sb = new StringBuilder();
-    sb.append("업로드한 파일 내에서 ").append(menuRecommendRequest.cookOrDelivery()).append("로 ");
-    sb.append(menuRecommendRequest.mealTime()).append("에 먹을 ")
-        .append(menuRecommendRequest.tasteType()).append("한 ").append(menuRecommendRequest.menuCountry())
-        .append("을 추천해줘.\n")
-        .append("답은 1개 여야해. 응답 형식: JSON  { name: String, gram:int, kcal: int, carbohydrate: int, protein: int, fat: int }");
+  public List<TotalRecommendResponse> getChatResponse(MenuRecommendRequest menuRecommendRequest) {
 
-    RecommendResponse recommend = gptManager.sendOpenAIRequest(sb.toString());
-    log.info(sb.toString());
+    GoalNutritionResponse memberGoal = goalService.getMemberGoal();
+    SupposedNutrition supposedNutrition = goalService.calculateSupposedNutrition(memberGoal);
+    SupposedNutrition calculatedSupposedNutrition = goalService.calculateMealTimeRate(
+        menuRecommendRequest.mealTime(), supposedNutrition);
 
-    return setImgUrl(recommend);
+    String prompt = createNutritionPrompt(menuRecommendRequest, calculatedSupposedNutrition);
+    log.info(prompt);
+
+    List<Menu> response = gptManager.sendOpenAIRequest(prompt);
+
+//    List<Menu> recommends = response.menus();
+
+    return response.stream().map(this::getTotalRecommendResponseByFoodName)
+        .collect(Collectors.toUnmodifiableList());
   }
 
-  public TotalRecommendResponse setImgUrl(RecommendResponse recommend) {
+  private String createNutritionPrompt(MenuRecommendRequest request,
+      SupposedNutrition supposedNutrition) {
+    String prefPrompt = "";
+    String tasteType = request.tasteType().equals("상관없음") ? "" : request.tasteType();
+    String menuCountry = request.menuCountry().equals("상관없음") ? "" : request.menuCountry();
+    String ingredient = request.ingredient().equals("상관없음") ? "" : request.ingredient();
+    if(tasteType.equals("") && menuCountry.equals("") && ingredient.equals("")){
+      prefPrompt = "사용자는 모든 음식을 선호해.";
+    }
+    else{
+      prefPrompt = "사용자는 " + tasteType + " " + menuCountry + " " + ingredient + " 음식을 선호해.";
+    }
+    String result = String.format(
+            "사용자가 %s으로 %s 해 먹을 식단을 업로드한 파일 내에서 추천해줘. 탄수화물 %dg, 단백질 %dg, 지방 %dg 을 섭취해야 해." + prefPrompt
+                    + " 응답 형식은 다른 말 없이 무조건 다음과 같아야 해 : JSON [String , int]",
+            request.mealTime(),request.cookOrDelivery(),supposedNutrition.carbohydrate(),
+            supposedNutrition.protein(),supposedNutrition.fat()
+    );
+    log.info(result);
+    return result;
+  }
 
-    Food food = staticFoodService.findFoodByName(recommend.name());
+  public TotalRecommendResponse getTotalRecommendResponseByFoodName(Menu response) {
+    Food food = staticFoodService.findFoodByName(response.name());
+    int amount = response.amount();
+    int kcal = (int) ((double) food.getKcal() * amount / 100);
+    log.info(String.valueOf(food.getKcal()) + " " + String.valueOf(kcal));
+    int carbo = (int) ((double) food.getCarbohydrate() * amount / 100);
+    int protein = (int) ((double) food.getProtein() * amount / 100);
+    int fat = (int) ((double) food.getFat() * amount / 100);
 
-    return TotalRecommendResponse.of(recommend.name(), recommend.gram(), recommend.kcal(),
-        recommend.carbohydrate(), recommend.protein(), recommend.fat(), food.getImgUrl());
+    return TotalRecommendResponse.of(food.getName(), kcal,
+        carbo, protein, fat, food.getImgUrl(),
+        amount, food.getServing());
   }
 }
