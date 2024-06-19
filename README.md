@@ -1,6 +1,6 @@
 
 # Nutrition analysis & Food Recommendation Service
-- 2024 Capstone Design Project 
+- 2024 Capstone Design Project 대상 수상
 # Project Architecture 
 
 ![서버아키텍쳐](https://github.com/hyunw9/JJIKMUK_Server/assets/43662405/4e7e323b-5ab4-4541-a48d-f7550fe3b9a3)
