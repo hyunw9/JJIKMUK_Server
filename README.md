@@ -1,9 +1,40 @@
-
 # Nutrition analysis & Food Recommendation Service
 - 2024 Capstone Design Project 대상 수상
+
+## 서비스 소개 
+'찍먹' 서비스는 사용자의 목표에 맞게 체중 및 영양성분 관리를 제공하는 어플리케이션 서비스 입니다. 
+
+## 주요 기능
+- 사용자의 정보를 기반으로 목표에 맞는 영양소 추천
+- 음식 사진 촬영을 통해 음식의 영양소 분석
+- 사용자 섭취 영양 성분 트래킹
+- 사용자 요구사항과 목표 영양성분을 종합하여 식단 추천
+  
 # Project Architecture 
 
 ![서버아키텍쳐](https://github.com/hyunw9/JJIKMUK_Server/assets/43662405/4e7e323b-5ab4-4541-a48d-f7550fe3b9a3)
+
+# ER Diagram
+![capstone_ERD](https://github.com/mjuCapstone/mjuCapstone_Server/assets/43662405/f54a1520-e781-4bcc-93c2-b80d0307ea4e)
+
+# Tech Stack
+- Spring boot
+- Spring Security
+- Json Web Token(JWT)
+- MySQL
+- Github
+- Github Actions
+- Docker
+- AWS EC2
+- AWS RDS
+- FastAPI
+- Gunicorn (WSGI)
+
+## Member
+|[박태우](https://github.com/ta-mj)|[강현욱](https://github.com/hyunw9)|[구지민](https://github.com/jimizip)|
+|:---:|:---:|:---:|
+|<img src="https://github.com/ta-mj.png" width="180" height="180" >|<img src="https://github.com/hyunw9.png" width="180" height="180" >|<img src="https://github.com/jimizip.png" width="180" height="180" >|
+| **Team Leader** & <br> **프롬프트 튜닝** | **백엔드 및 AI 서버 개발**| **메뉴 데이터 개발** |
 
 ## 고민점 1
 1. 기존에 존재하는 음식 데이터와 실제 추천받는 데이터와 불일치가 발생하는 문제 
