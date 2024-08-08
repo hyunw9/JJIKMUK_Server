@@ -34,7 +34,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      ## create application-dev.yml
+      ##  create application-dev.yml
       - name: make application.yml
         if: contains(github.ref, 'develop')
         run: |
