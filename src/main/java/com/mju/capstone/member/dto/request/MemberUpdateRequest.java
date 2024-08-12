@@ -7,7 +7,7 @@ import lombok.Builder;
 
 @Builder(access = AccessLevel.PRIVATE)
 public record MemberUpdateRequest(
-    // Optional<String> password,
+    Optional<String> password,
     Optional<String> nickname,
     Optional<Integer> height,
     Optional<Integer> weight,

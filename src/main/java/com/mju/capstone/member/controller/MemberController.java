@@ -31,14 +31,14 @@ public class MemberController {
     return ResponseEntity.status(HttpStatus.OK)
         .body(ControllerMessage.of(
             SuccessMessage.OK,
-            memberService.findByEmail(SecurityUtil.getLoginUserEmail()))
+            memberService.findMemberInfoByEmail(SecurityUtil.getLoginUserEmail()))
         );
   }
 
   @PatchMapping("/member/info")
   @Operation(summary = "멤버 정보 수정", description = "사용자 사용자 정보 수정 API")
-  public ResponseEntity<?> updateMemberInfo(@RequestBody MemberUpdateRequest request, @RequestParam("password") Optional<String> password) {
-    MemberUpdateResponse response = memberService.updateMemberInfo(request, password);
+  public ResponseEntity<?> updateMemberInfo(@RequestBody MemberUpdateRequest request) {
+    MemberUpdateResponse response = memberService.updateMemberInfo(request);
     return ResponseEntity.status(HttpStatus.OK)
         .body(response);
   }

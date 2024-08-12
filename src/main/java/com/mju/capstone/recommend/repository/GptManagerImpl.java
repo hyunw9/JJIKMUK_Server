@@ -28,8 +28,8 @@ public class GptManagerImpl implements GptManager {
 
   private final RestTemplate restTemplate;
 
-  // @Value("${python-server.url}")
-  private String server_url = "127.0.0.1:8081";
+  @Value("${python-server.url}")
+  private String server_url;
 
   public GptManagerImpl(RestTemplate restTemplate) {
     this.restTemplate = restTemplate;
