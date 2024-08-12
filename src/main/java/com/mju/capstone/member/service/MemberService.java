@@ -32,13 +32,13 @@ public class MemberService {
   }
 
   @Transactional
-  public MemberUpdateResponse updateMemberInfo(MemberUpdateRequest updateRequest) {
+  public MemberUpdateResponse updateMemberInfo(MemberUpdateRequest updateRequest, Optional<String> newPassword) {
     Member member = findByEmail(SecurityUtil.getLoginUserEmail());
 
-    if (updateRequest.password().isPresent()) {
-      String hashedPassword = passwordEncoder.encode(updateRequest.password().get());
+    if (newPassword.isPresent()) {
+      String hashedPassword = passwordEncoder.encode(newPassword.get());
+      member.updatePassword(hashedPassword);
       updateRequest = new MemberUpdateRequest(
-          Optional.of(hashedPassword),
           updateRequest.nickname(),
           updateRequest.height(),
           updateRequest.weight(),

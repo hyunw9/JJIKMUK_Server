@@ -63,9 +63,9 @@ public class Member {
 
     updateRequest.nickname().ifPresent(this::updateNickname);
 
-    if (updateRequest.password().isPresent()) {
-      updatePassword(updateRequest.password().get());
-    }
+//    if (updateRequest.password().isPresent()) {
+//      updatePassword(updateRequest.password().get());
+//    }
 
     if (updateRequest.height().isPresent() && updateRequest.height().get() != this.height) {
       this.height = updateRequest.height().get();
@@ -94,9 +94,15 @@ public class Member {
     return requiresRecalculation;
   }
 
-  private void updatePassword(String password) {
-    if (password != null && !password.isEmpty()) {
-      this.password = password;
+//  private void updatePassword(String password) {
+//    if (password != null && !password.isEmpty()) {
+//      this.password = password;
+//    }
+//  }
+
+  public void updatePassword(String encodedPassword) {
+    if (encodedPassword != null && !encodedPassword.isEmpty()) {
+      this.password = encodedPassword;
     }
   }
 

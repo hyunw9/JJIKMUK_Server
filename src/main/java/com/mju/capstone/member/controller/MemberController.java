@@ -5,17 +5,16 @@ import com.mju.capstone.global.response.message.SuccessMessage;
 import com.mju.capstone.global.security.util.SecurityUtil;
 import com.mju.capstone.member.dto.request.MemberUpdateRequest;
 import com.mju.capstone.member.dto.response.MemberUpdateResponse;
+import com.mju.capstone.member.entity.Member;
 import com.mju.capstone.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -38,8 +37,8 @@ public class MemberController {
 
   @PatchMapping("/member/info")
   @Operation(summary = "멤버 정보 수정", description = "사용자 사용자 정보 수정 API")
-  public ResponseEntity<?> updateMemberInfo(@RequestBody MemberUpdateRequest request) {
-    MemberUpdateResponse response = memberService.updateMemberInfo(request);
+  public ResponseEntity<?> updateMemberInfo(@RequestBody MemberUpdateRequest request, @RequestParam("password") Optional<String> password) {
+    MemberUpdateResponse response = memberService.updateMemberInfo(request, password);
     return ResponseEntity.status(HttpStatus.OK)
         .body(response);
   }
