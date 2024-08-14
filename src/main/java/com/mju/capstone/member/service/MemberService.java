@@ -6,6 +6,7 @@ import com.mju.capstone.global.response.message.ErrorMessage;
 import com.mju.capstone.global.security.util.SecurityUtil;
 import com.mju.capstone.member.dto.request.MemberUpdateRequest;
 import com.mju.capstone.member.dto.request.NutritionCalculatorRequest;
+import com.mju.capstone.member.dto.response.MemberInfoResponse;
 import com.mju.capstone.member.dto.response.MemberUpdateResponse;
 import com.mju.capstone.member.entity.Member;
 import com.mju.capstone.member.repository.MemberRepository;
@@ -28,12 +29,19 @@ public class MemberService {
 
   public Member findByEmail(String email) {
     return memberRepository.findByEmail(email)
-        .orElseThrow(() -> new NotFoundException(ErrorMessage.MEMBER_NOT_FOUND));
+            .orElseThrow(() -> new NotFoundException(ErrorMessage.MEMBER_NOT_FOUND));
+  }
+
+  public MemberInfoResponse findMemberInfoByEmail(String email) {
+    Member member = findByEmail(email);
+    return MemberInfoResponse.from(member.getId(), member.getEmail(), member.getRole(), member.getNickname(), member.getBirth(), member.getHeight(), member.getWeight(), member.getLevel(), member.getDietPlan());
   }
 
   @Transactional
   public MemberUpdateResponse updateMemberInfo(MemberUpdateRequest updateRequest) {
-    Member member = findByEmail(SecurityUtil.getLoginUserEmail());
+    MemberInfoResponse memberInfo = findMemberInfoByEmail(SecurityUtil.getLoginUserEmail());
+
+    Member member = findByEmail(memberInfo.email());
 
     if (updateRequest.password().isPresent()) {
       String hashedPassword = passwordEncoder.encode(updateRequest.password().get());
@@ -55,6 +63,7 @@ public class MemberService {
     if (requiresRecalculation) {
       publishRecalculationEvent(member);
     }
+
     return MemberUpdateResponse.fromMember(member);
   }
 
@@ -62,4 +71,5 @@ public class MemberService {
     NutritionCalculatorRequest calculatorRequest = NutritionCalculatorRequest.fromMember(member);
     publisher.publishEvent(new CalculationEvent(this, calculatorRequest));
   }
+
 }

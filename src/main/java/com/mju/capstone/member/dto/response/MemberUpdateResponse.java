@@ -10,10 +10,10 @@ public record MemberUpdateResponse(
     int height,
     int weight,
     int level,
-    int dietLevel
-) {
+    int dietLevel) {
   public static MemberUpdateResponse fromMember(Member member) {
     return new MemberUpdateResponse(member.getId(),member.getNickname(),member.getBirth(),
         member.getHeight(), member.getWeight(), member.getLevel(), member.getDietPlan());
   }
+
 }
