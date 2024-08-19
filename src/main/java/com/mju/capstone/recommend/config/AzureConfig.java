@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -29,7 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 @Configuration
@@ -37,6 +37,7 @@ import org.springframework.core.io.ResourceLoader;
 @Slf4j
 public class AzureConfig {
 
+  private final ResourceLoader resourceLoader;
   @Value("${azure.credential}")
   private String credentialKey;
   @Value("${azure.endpoint}")
@@ -45,8 +46,6 @@ public class AzureConfig {
   private String key;
   @Value("${azure.model}")
   private String model;
-
-  private final ResourceLoader resourceLoader;
 
   @Bean
   AssistantsClient assistantsClient() {
@@ -60,18 +59,9 @@ public class AzureConfig {
   @Bean
   public Assistant customAssistant(AssistantsClient client) throws IOException {
     // ResourceLoader를 사용하여 리소스를 가져옵니다.
-    Resource resource = resourceLoader.getResource("classpath:menu_final.txt");
-
-    // getFile()이 아닌, Path로 변환하여 사용합니다.
-    Path filePath = resource.getFile().toPath();
-
-    // BinaryData로 파일 데이터를 읽어옵니다.
+    Path filePath = Paths.get("src", "main", "resources", "menu_final.txt");
     BinaryData fileData = BinaryData.fromFile(filePath);
-
-    // FileDetails 객체를 생성합니다.
-    FileDetails fileDetails = new FileDetails(fileData, "menu_final.txt");
-
-
+    FileDetails fileDetails = new FileDetails(fileData, "meni_final.txt");
     OpenAIFile openAIFile = client.uploadFile(fileDetails, FilePurpose.ASSISTANTS);
 
     String instructions = loadInstructionsFromFile("instruction.txt");
@@ -81,7 +71,8 @@ public class AzureConfig {
     createToolResourcesOptions.setFileSearch(
         new CreateFileSearchToolResourceOptions(
             new CreateFileSearchToolResourceVectorStoreOptionsList(
-                Arrays.asList(new CreateFileSearchToolResourceVectorStoreOptions(Arrays.asList(openAIFile.getId()))))));
+                Arrays.asList(new CreateFileSearchToolResourceVectorStoreOptions(
+                    Arrays.asList(openAIFile.getId()))))));
 
     return client.createAssistant(
         new AssistantCreationOptions(model)
@@ -94,7 +85,8 @@ public class AzureConfig {
 
   private String loadInstructionsFromFile(String filePath) throws IOException {
     try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-        Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream(filePath)), StandardCharsets.UTF_8))) {
+        Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream(filePath)),
+        StandardCharsets.UTF_8))) {
       return reader.lines().collect(Collectors.joining("\n"));
     }
   }
