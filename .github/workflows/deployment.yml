@@ -56,9 +56,9 @@ jobs:
 
       - name: make menu data
         run: |
-          cd ./src/main/resources
+          cd $GITHUB_WORKSPACE/src/main/resources
           touch ./menu_final.txt 
-          echo "${{ secrets.ENV_MENU_FINAL }}" > ./menu_final.txt
+          echo "${{ secrets.ENV_MENU_FINAL }}" > $GITHUB_WORKSPACE/src/main/resources/menu_final.txt
         shell: bash
         env:
           LC_ALL : C.UTF-8
