@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -30,6 +29,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
 @Configuration
 @RequiredArgsConstructor
@@ -45,6 +46,8 @@ public class AzureConfig {
   @Value("${azure.model}")
   private String model;
 
+  private final ResourceLoader resourceLoader;
+
   @Bean
   AssistantsClient assistantsClient() {
     return new AssistantsClientBuilder()
@@ -56,9 +59,16 @@ public class AzureConfig {
 
   @Bean
   public Assistant customAssistant(AssistantsClient client) throws IOException {
+    // ResourceLoader를 사용하여 리소스를 가져옵니다.
+    Resource resource = resourceLoader.getResource("classpath:menu_final.txt");
 
-    Path filePath = Paths.get("src/main/resources/menu_final.txt");
+    // getFile()이 아닌, Path로 변환하여 사용합니다.
+    Path filePath = resource.getFile().toPath();
+
+    // BinaryData로 파일 데이터를 읽어옵니다.
     BinaryData fileData = BinaryData.fromFile(filePath);
+
+    // FileDetails 객체를 생성합니다.
     FileDetails fileDetails = new FileDetails(fileData, "menu_final.txt");
 
 
