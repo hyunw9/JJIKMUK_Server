@@ -78,8 +78,8 @@ public class GptManagerImpl implements GptManager {
       String jsonResponse = ((MessageTextContent) messageContent).getText().getValue();
       log.info("Message content: {}", jsonResponse);
       try {
-        jsonResponse = jsonResponse.replaceAll("```json", "").trim();
-        List<Menu> menu = objectMapper.readValue(jsonResponse, new TypeReference<>() {
+        jsonResponse = jsonResponse.replaceAll("```json", "").trim().replaceAll("```","");
+        List<Menu> menu = objectMapper.readValue(jsonResponse, new TypeReference<List<Menu>>() {
         });
         result.addAll(menu);
       } catch (Exception e) {

@@ -74,7 +74,7 @@ public class AzureConfig {
 
     OpenAIFile openAIFile = client.uploadFile(fileDetails, FilePurpose.ASSISTANTS);
 
-    String instructions = loadInstructionsFromFile("instruction2.txt");
+    String instructions = loadInstructionsFromFile("instruction.txt");
     log.info("Application Started with Instructions: {}", instructions);
 
     CreateToolResourcesOptions createToolResourcesOptions = new CreateToolResourcesOptions();
