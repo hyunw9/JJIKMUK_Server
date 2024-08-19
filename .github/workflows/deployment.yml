@@ -46,7 +46,6 @@ jobs:
         shell: bash
 
       - name: make model foundation
-        if: contains(github.ref, 'develop')
         run: |
           cd ./src/main/resources
           touch ./instruction.txt
