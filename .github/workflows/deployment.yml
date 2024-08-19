@@ -56,12 +56,15 @@ jobs:
 
       - name: make menu data
         run: |
-          cd $GITHUB_WORKSPACE/src/main/resources
+          cd $GITHUB_WORKSPACE
           touch ./menu_final.txt 
-          echo "${{ secrets.ENV_MENU_FINAL }}" > $GITHUB_WORKSPACE/src/main/resources/menu_final.txt
+          echo "${{ secrets.ENV_MENU_FINAL }}" > $GITHUB_WORKSPACE/menu_final.txt
         shell: bash
         env:
           LC_ALL : C.UTF-8
+          
+      - name: Verify file creation
+        run: ls -la $GITHUB_WORKSPACE/src/main/resources/
           
       # gradle build 위한 permission
       - name: Grant execute permission for gradlew
