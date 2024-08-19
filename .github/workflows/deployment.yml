@@ -50,10 +50,19 @@ jobs:
           cd ./src/main/resources
           touch ./instruction.txt
           echo "${{ secrets.ENV_INSTRUCTION }}" > ./instruction.txt
+        shell: bash
+        env:
+          LC_ALL : C.UTF-8
+
+      - name: make menu data
+        run: |
+          cd ./src/main/resources
           touch ./menu_final.txt 
           echo "${{ secrets.ENV_MENU_FINAL }}" > ./menu_final.txt
         shell: bash
-        
+        env:
+          LC_ALL : C.UTF-8
+          
       # gradle build 위한 permission
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
