@@ -61,7 +61,7 @@ public class AzureConfig {
     // ResourceLoader를 사용하여 리소스를 가져옵니다.
     Path filePath = Paths.get("src", "main", "resources", "menu_final.txt");
     BinaryData fileData = BinaryData.fromFile(filePath);
-    FileDetails fileDetails = new FileDetails(fileData, "meni_final.txt");
+    FileDetails fileDetails = new FileDetails(fileData, "menu_final.txt");
     OpenAIFile openAIFile = client.uploadFile(fileDetails, FilePurpose.ASSISTANTS);
 
     String instructions = loadInstructionsFromFile("instruction.txt");
