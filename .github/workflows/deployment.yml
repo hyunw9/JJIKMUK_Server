@@ -45,6 +45,16 @@ jobs:
           echo "${{ secrets.PROPERTIES }}" > ./application.yml
         shell: bash
 
+      - name: make model foundation
+        if: contains(github.ref, 'develop')
+        run: |
+          cd ./src/main/resources
+          touch ./instruction.txt
+          echo "${{ secrets.ENV_INSTRUCTION }}" > ./instruction.txt
+          touch ./menu_final.txt 
+          echo "${{ secrets.ENV_MENU_FINAL }}" > ./menu_final.txt
+        shell: bash
+
       # gradle build 위한 permission
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew

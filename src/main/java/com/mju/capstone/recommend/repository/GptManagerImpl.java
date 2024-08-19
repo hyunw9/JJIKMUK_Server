@@ -1,61 +1,92 @@
 package com.mju.capstone.recommend.repository;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static com.azure.ai.openai.assistants.models.MessageRole.USER;
 
-import com.mju.capstone.global.exception.BusinessException;
-import com.mju.capstone.global.response.message.ErrorMessage;
+import com.azure.ai.openai.assistants.AssistantsClient;
+import com.azure.ai.openai.assistants.models.Assistant;
+import com.azure.ai.openai.assistants.models.AssistantThread;
+import com.azure.ai.openai.assistants.models.AssistantThreadCreationOptions;
+import com.azure.ai.openai.assistants.models.CreateRunOptions;
+import com.azure.ai.openai.assistants.models.MessageContent;
+import com.azure.ai.openai.assistants.models.MessageTextContent;
+import com.azure.ai.openai.assistants.models.PageableList;
+import com.azure.ai.openai.assistants.models.RunStatus;
+import com.azure.ai.openai.assistants.models.ThreadMessage;
+import com.azure.ai.openai.assistants.models.ThreadMessageOptions;
+import com.azure.ai.openai.assistants.models.ThreadRun;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mju.capstone.recommend.domain.GptManager;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.mju.capstone.recommend.dto.response.Menu;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.client.RestTemplate;
 
 @Repository
 @PropertySource("classpath:application.yml")
+@RequiredArgsConstructor
 @Slf4j
 public class GptManagerImpl implements GptManager {
 
-  private final RestTemplate restTemplate;
+  private final AssistantsClient client;
+  private final Assistant assistant;
 
-  @Value("${python-server.url}")
-  private String server_url;
+  public List<Menu> sendOpenAIRequest(String messageContent) {
+    log.info("Processing message: {}", messageContent);
 
-  public GptManagerImpl(RestTemplate restTemplate) {
-    this.restTemplate = restTemplate;
+    AssistantThread thread = createAssistantThread();
+    sendMessageToThread(thread.getId(), messageContent);
+
+    List<Menu> result;
+
+    try {
+      result = getGptResponse(thread.getId());
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+    return result;
   }
 
-  public List<Menu> sendOpenAIRequest(String request) {
+  private AssistantThread createAssistantThread() {
+    return client.createThread(new AssistantThreadCreationOptions());
+  }
 
-    String url = server_url;
-    Map<String, String> requestBody = new HashMap<>();
-    requestBody.put("content", request);
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(APPLICATION_JSON);
+  private void sendMessageToThread(String threadId, String messageContent) {
+    client.createMessage(threadId, new ThreadMessageOptions(USER, messageContent));
+  }
 
-    HttpEntity<Map<String, String>> requestHttpEntity = new HttpEntity<>(requestBody, headers);
+  private List<Menu> getGptResponse(String threadId) throws InterruptedException {
+    ThreadRun run = client.createRun(threadId, new CreateRunOptions(assistant.getId()));
 
-//    ResponseModel response= restTemplate.postForObject(url, requestHttpEntity, ResponseModel.class);
+    do {
+      run = client.getRun(run.getThreadId(), run.getId());
+      Thread.sleep(500);
+    } while (run.getStatus() == RunStatus.QUEUED || run.getStatus() == RunStatus.IN_PROGRESS);
 
-    ResponseEntity<List<Menu>> responseEntity =
-        restTemplate.exchange(url,HttpMethod.POST,requestHttpEntity,new ParameterizedTypeReference<List<Menu>>() {});
+    return extractMessagesFromResponse(client.listMessages(run.getThreadId()));
+  }
 
-    log.info(responseEntity.getBody().toString());
-    List<Menu> recommendResponse = responseEntity.getBody();
+  private List<Menu> extractMessagesFromResponse(PageableList<ThreadMessage> messages) {
+    List<Menu> result = new ArrayList<>();
+    ObjectMapper objectMapper = new ObjectMapper();
+    ThreadMessage threadMessage = messages.getData().getFirst();
 
-    if (recommendResponse.isEmpty() || recommendResponse == null) {
-      throw new BusinessException(ErrorMessage.RECOMMEND_NOT_FOUND);
+    for (MessageContent messageContent : threadMessage.getContent()) {
+      String jsonResponse = ((MessageTextContent) messageContent).getText().getValue();
+      log.info("Message content: {}", jsonResponse);
+      try {
+        jsonResponse = jsonResponse.replaceAll("```json", "").trim();
+        List<Menu> menu = objectMapper.readValue(jsonResponse, new TypeReference<>() {
+        });
+        result.addAll(menu);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
-    return recommendResponse;
+    log.info("result: {}" ,result.toString());
+    return result;
   }
 }

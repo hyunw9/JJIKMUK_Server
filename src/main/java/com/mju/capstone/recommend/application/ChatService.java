@@ -35,8 +35,7 @@ public class ChatService {
     log.info(prompt);
 
     List<Menu> response = gptManager.sendOpenAIRequest(prompt);
-
-//    List<Menu> recommends = response.menus();
+    log.info("response size : " + response.size());
 
     return response.stream().map(this::getTotalRecommendResponseByFoodName)
         .collect(Collectors.toUnmodifiableList());
@@ -55,8 +54,7 @@ public class ChatService {
       prefPrompt = "사용자는 " + tasteType + " " + menuCountry + " " + ingredient + " 음식을 선호해.";
     }
     String result = String.format(
-            "사용자가 %s으로 %s 해 먹을 식단을 업로드한 파일 내에서 추천해줘. 탄수화물 %dg, 단백질 %dg, 지방 %dg 을 섭취해야 해." + prefPrompt
-                    + " 응답 형식은 다른 말 없이 무조건 다음과 같아야 해 : JSON [String , int]",
+            "사용자가 %s으로 %s로 먹어야해. 탄수화물 %dg, 단백질 %dg, 지방 %dg 을 섭취해야 해." + prefPrompt,
             request.mealTime(),request.cookOrDelivery(),supposedNutrition.carbohydrate(),
             supposedNutrition.protein(),supposedNutrition.fat()
     );
@@ -65,6 +63,7 @@ public class ChatService {
   }
 
   public TotalRecommendResponse getTotalRecommendResponseByFoodName(Menu response) {
+    log.info(response.name());
     Food food = staticFoodService.findFoodByName(response.name());
     int amount = response.amount();
     int kcal = (int) ((double) food.getKcal() * amount / 100);
