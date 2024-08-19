@@ -45,6 +45,10 @@ dependencies {
 
 	//WebFlux
 //	implementation 'org.springframework:spring-webflux:6.1.6'
+
+	//azure
+	implementation group: 'com.azure', name: 'azure-ai-openai-assistants', version: '1.0.0-beta.3'
+
 }
 
 tasks.named('test') {
