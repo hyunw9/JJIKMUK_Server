@@ -18,10 +18,12 @@ import com.azure.core.credential.AzureKeyCredential;
 import com.azure.core.util.BinaryData;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -59,8 +61,12 @@ public class AzureConfig {
   @Bean
   public Assistant customAssistant(AssistantsClient client) throws IOException {
     // ResourceLoader를 사용하여 리소스를 가져옵니다.
-    Path filePath = Paths.get("src", "main", "resources", "menu_final.txt");
-    BinaryData fileData = BinaryData.fromFile(filePath);
+    InputStream inputStream = getClass().getClassLoader().getResourceAsStream("menu_final.txt");
+    Path tempFile = Files.createTempFile("menu_final", ".txt");
+    Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
+
+    BinaryData fileData = BinaryData.fromFile(tempFile);
+
     FileDetails fileDetails = new FileDetails(fileData, "menu_final.txt");
     OpenAIFile openAIFile = client.uploadFile(fileDetails, FilePurpose.ASSISTANTS);
 
