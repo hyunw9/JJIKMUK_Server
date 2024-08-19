@@ -50,6 +50,11 @@ jobs:
           cd ./src/main/resources
           touch ./instruction.txt
           echo "${{ secrets.ENV_INSTRUCTION }}" > ./instruction.txt
+        shell: bash
+
+      - name: make menu data
+        run: |
+          cd ./src/main/resources
           touch ./menu_final.txt 
           echo "${{ secrets.ENV_MENU_FINAL }}" > ./menu_final.txt
         shell: bash
